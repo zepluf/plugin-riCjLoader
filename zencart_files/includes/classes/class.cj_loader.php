@@ -178,7 +178,7 @@ class RICJLoader
 			}
 		}
 			
-		if(!$this->getOptions('load_global')) {
+		if($this->getOptions('load_global')) {
 		/**
 		 * load all template-specific stylesheets, named like "style*.css", alphabetically
 		 */
@@ -240,7 +240,7 @@ class RICJLoader
 		/**
 		 * load printer-friendly stylesheets -- named like "print*.css", alphabetically
 		 */
-		if(!$this->getOptions('load_print')) {
+		if($this->getOptions('load_print')) {
 			$directory_array = $this->findAssets('.css','css', '/^print/');;
 			sort($directory_array);
 			// TODO: don't output link tags directly from here
