@@ -3,12 +3,12 @@
  * Common Template
  *
  * outputs the html header. i,e, everything that comes before the \</head\> tag <br />
- * 
+ *
  * @package templateSystem
- * @copyright Copyright 2003-2006 Zen Cart Development Team
+ * @copyright Copyright 2003-2010 Zen Cart Development Team
  * @copyright Portions Copyright 2003 osCommerce
  * @license http://www.zen-cart.com/license/2_0.txt GNU Public License V2.0
- * @version $Id: html_header.php 6948 2007-09-02 23:30:49Z drbyte $
+ * @version $Id: html_header.php 15761 2010-03-31 19:31:27Z drbyte $
  */
 /**
  * load the module for generating page meta-tags
@@ -37,6 +37,9 @@ require(DIR_WS_MODULES . zen_get_module_directory('meta_tags.php'));
 <?php } //endif FAVICON ?>
 
 <base href="<?php echo (($request_type == 'SSL') ? HTTPS_SERVER . DIR_WS_HTTPS_CATALOG : HTTP_SERVER . DIR_WS_CATALOG ); ?>" />
+<?php if (isset($canonicalLink) && $canonicalLink != '') { ?>
+<link rel="canonical" href="<?php echo $canonicalLink; ?>" />
+<?php } ?>
 
 <?php
 /**
@@ -46,7 +49,7 @@ require(DIR_WS_MODULES . zen_get_module_directory('meta_tags.php'));
 if($RI_CJLoader->get('status')){
 	$directory_array = $template->get_template_part(DIR_WS_TEMPLATE.'auto_loaders', '/^loader_/', '.php');
 	
-	$loaders_check = $RI_CJLoader->get('loaders');
+	$loaders_check = $RI_CJLoader->getOptions('loaders');
 	if($loaders_check == '*' || count($loaders_check) > 0){
 		while(list ($key, $value) = each($directory_array)) {
 		/**
@@ -57,15 +60,19 @@ if($RI_CJLoader->get('status')){
 		}
 	}
 	
+	$RI_CJLoader->addLoaders($loaders, true);
+	
 	$RI_CJLoader->loadCssJsFiles();
 	$files = $RI_CJLoader->processCssJsFiles();
 	foreach($files['css'] as $file)
 		if($file['include']) include($file['string']);
-		else echo $file['string'];
+		else if(!$RI_CJLoader->getOptions('minify') || $file['external']) echo "<link rel=\"stylesheet\" type=\"text/css\" link='{$file['src']}' />\n";
+		else echo "<link rel=\"stylesheet\" type=\"text/css\" href=\"min/?f={$file['src']}&amp;".$RI_CJLoader->getOptions('minify_time')."\" />\n";
 		
 	foreach($files['js'] as $file)
 		if($file['include']) include($file['string']);
-		else echo $file['string'];
+		else if(!$RI_CJLoader->getOptions('minify') || $file['external']) echo "<script type='text/javascript' src='{$file['src']}'></script>\n";
+		else echo "<script type=\"text/javascript\" src=\"min/?f={$file['src']}&amp;".$RI_CJLoader->getOptions('minify_time')."\"></script>\n";
 }
 //DEBUG: echo '<!-- I SEE cat: ' . $current_category_id . ' || vs cpath: ' . $cPath . ' || page: ' . $current_page . ' || template: ' . $current_template . ' || main = ' . ($this_is_home_page ? 'YES' : 'NO') . ' -->';
 ?>
