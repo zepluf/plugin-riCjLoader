@@ -1,0 +1,41 @@
+<?php
+/**
+* @package Pages
+* @copyright Copyright 2008-2009 RubikIntegration.com
+* @copyright Copyright 2003-2006 Zen Cart Development Team
+* @copyright Portions Copyright 2003 osCommerce
+* @license http://www.zen-cart.com/license/2_0.txt GNU Public License V2.0
+* @version $Id: link.php 149 2009-03-04 05:23:35Z yellow1912 $
+*/                                             
+                                                                  
+$loaders[] = array('conditions' => array('pages' => $pages,'call_backs'=>array('is_logged_in','class_name,method_name')),
+										'jscript_files'			 => array(
+																						// the "key" of this associate array is the "path" which is relative to the jscript folder
+																						// the "value" is the order the file should be loaded
+																						'jquery/jquery-1.2.6.min.js' 				=> 	1, 
+																										 										
+																						/** 
+																						* you can load php files too. But note that it has to have this form:
+																						* <script language="javascript" type="text/javascript"><!--
+																						* <?php // php code goes here
+																						* 			// if you want to use global variables, you have to declare them global
+																						* ?>
+																						* //--></script>				 											
+																						**/				 											
+                      											'test.php' 	=> 	11                                 
+																													),
+										'css_files'						=> array(
+																						'mycss/something.css'=> 	11,
+																						// you can load .php file as well
+                                            'something.php'=> 	 11															
+ 																						/** 
+																						* you can load php files too. But note that it has to have this form:
+																						* <style type="text/css">
+																						* <?php // php code goes here
+																						* 			// if you want to use global variables, you have to declare them global
+																						* ?>
+																						* </style>											
+																						**/			
+																						)																			
+								);                                                                  
+                                                                
