@@ -78,11 +78,11 @@ class RICJLoader
 		$files = array();
 		foreach ($allFiles as $file) {
 		// case 1: file is in server but full path not passed, assuming it is under corresponding template css/js folder
-      if(file_exists(DIR_FS_CATALOG.DIR_WS_TEMPLATE.$directory. '/' .$file)){
-        $files[$relative_path.DIR_WS_TEMPLATE.$directory. '/' .$file] = $order++;
+      if(file_exists(DIR_FS_CATALOG.DIR_WS_TEMPLATE.$directory.'/'.$file)){
+        $files[$relative_path.DIR_WS_TEMPLATE.$directory.'/'.$file] = $order++;
       }
-      elseif ($this->getOptions('inheritance') != '' && file_exists(DIR_FS_CATALOG.DIR_WS_TEMPLATES.$this->getOptions('inheritance').$directory.'/'.$file)){
-        $files[$relative_path.DIR_WS_TEMPLATES.$this->getOptions('inheritance').$directory.'/'.$file] = $order++;
+      elseif ($this->getOptions('inheritance') != '' && file_exists(DIR_FS_CATALOG.DIR_WS_TEMPLATES.$this->getOptions('inheritance').'/'.$directory.'/'.$file)){
+        $files[$relative_path.DIR_WS_TEMPLATES.$this->getOptions('inheritance').'/'.$directory.'/'.$file] = $order++;
       }
 		}
 
