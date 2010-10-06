@@ -65,12 +65,12 @@ if($RI_CJLoader->get('status')){
 	$RI_CJLoader->loadCssJsFiles();
 	$files = $RI_CJLoader->processCssJsFiles();
 	foreach($files['css'] as $file)
-		if($file['include']) include($file['string']);
+		if($file['include']) include($file['src']);
 		else if(!$RI_CJLoader->getOptions('minify') || $file['external']) echo "<link rel=\"stylesheet\" type=\"text/css\" link='{$file['src']}' />\n";
 		else echo "<link rel=\"stylesheet\" type=\"text/css\" href=\"min/?f={$file['src']}&amp;".$RI_CJLoader->getOptions('minify_time')."\" />\n";
 		
 	foreach($files['js'] as $file)
-		if($file['include']) include($file['string']);
+		if($file['include']) include($file['src']);
 		else if(!$RI_CJLoader->getOptions('minify') || $file['external']) echo "<script type='text/javascript' src='{$file['src']}'></script>\n";
 		else echo "<script type=\"text/javascript\" src=\"min/?f={$file['src']}&amp;".$RI_CJLoader->getOptions('minify_time')."\"></script>\n";
 }
