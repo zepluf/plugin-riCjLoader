@@ -70,7 +70,7 @@ class RICJLoader
 		$templateDir = $this->getAssetDir($extension, $directory, DIR_WS_TEMPLATE);
 		$allFiles = $this->template->get_template_part($templateDir, $file_pattern, $extension);
 
-		if(!empty($this->getOptions('inheritance'))){
+		if($this->getOptions('inheritance') != ''){
 			$defaultDir = $this->getAssetDir($extension, $directory, DIR_WS_TEMPLATES. $this->getOptions('inheritance'));
 			$allFiles = array_unique(array_merge($this->template->get_template_part($defaultDir, $file_pattern, $extension),$allFiles));
 		}
