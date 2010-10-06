@@ -109,11 +109,11 @@ class RICJLoader
 		return $result;
 	}
 	
-	function addLoaders($loader, $multi = false){
+	function addLoaders($loaders, $multi = false){
 		if($multi)
 			$this->loaders = array_merge($this->loaders, $loaders);
 		else
-			$this->loaders[] = $loader;
+			$this->loaders[] = $loaders;
 	}
 	
 	function setCurrentPageBase(){
