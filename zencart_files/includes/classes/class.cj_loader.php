@@ -241,8 +241,7 @@ class RICJLoader
 		 * load printer-friendly stylesheets -- named like "print*.css", alphabetically
 		 */
 		if($this->getOptions('load_print')) {
-			$directory_array = $this->findAssets('.css','css', '/^print/');;
-			sort($directory_array);
+			$directory_array = $this->findAssets('.css','css', '/^print/');
 			// TODO: don't output link tags directly from here
 			foreach ($directory_array as $key => $value) {
 				echo '<link rel="stylesheet" type="text/css" media="print" href="' . $key . '" />'."\n";
