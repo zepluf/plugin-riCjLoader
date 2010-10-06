@@ -61,7 +61,6 @@ if($RI_CJLoader->get('status')){
 	}
 	
 	$RI_CJLoader->addLoaders($loaders, true);
-	
 	$RI_CJLoader->loadCssJsFiles();
 	$files = $RI_CJLoader->processCssJsFiles();
 	foreach($files['css'] as $file)

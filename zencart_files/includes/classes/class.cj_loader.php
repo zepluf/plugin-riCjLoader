@@ -19,7 +19,7 @@ class RICJLoader
 	protected $current_page_base = '';
 	protected $request_type;
 	protected $loaders = array();
-	protected $options = array('admin' => false, 'loaders' => '*', 'status' => true, 'ajax' => false, 'load_global' => true, 'load_print' => true, 'minify' => false, 'minify_time' => 0);
+	protected $options = array('admin' => false, 'loaders' => '*', 'status' => true, 'ajax' => false, 'load_global' => true, 'load_print' => true, 'minify' => false, 'minify_time' => 0, 'inheritance' => '');
 	
 	function __construct()
 	{
@@ -64,14 +64,14 @@ class RICJLoader
 	 * @param string extension - file extension to look for
 	 * @param directory - subdirectory of the template containing the assets
 	 */
-	function findAssets($extension, $directory, $file_pattern = '', $order = 0, $inheritance = '')
+	function findAssets($extension, $directory, $file_pattern = '', $order = 0)
 	{
 		$relative_path = $this->request_type == 'NONSSL' ? DIR_WS_CATALOG : DIR_WS_HTTPS_CATALOG;
 		$templateDir = $this->getAssetDir($extension, $directory, DIR_WS_TEMPLATE);
 		$allFiles = $this->template->get_template_part($templateDir, $file_pattern, $extension);
 
-		if(!empty($inheritance)){
-			$defaultDir = $this->getAssetDir($extension, $directory, DIR_WS_TEMPLATES. $$inheritance);
+		if(!empty($this->getOptions('inheritance'))){
+			$defaultDir = $this->getAssetDir($extension, $directory, DIR_WS_TEMPLATES. $this->getOptions('inheritance'));
 			$allFiles = array_unique(array_merge($this->template->get_template_part($defaultDir, $file_pattern, $extension),$allFiles));
 		}
 		
@@ -81,8 +81,8 @@ class RICJLoader
       if(file_exists(DIR_FS_CATALOG.DIR_WS_TEMPLATE.$directory. '/' .$file)){
         $files[$relative_path.DIR_WS_TEMPLATE.$directory. '/' .$file] = $order++;
       }
-      elseif ($inheritance != '' && file_exists(DIR_FS_CATALOG.DIR_WS_TEMPLATES.$inheritance.$directory.'/'.$file)){
-        $files[$relative_path.DIR_WS_TEMPLATES.$inheritance.$directory.'/'.$file] = $order++;
+      elseif ($this->getOptions('inheritance') != '' && file_exists(DIR_FS_CATALOG.DIR_WS_TEMPLATES.$this->getOptions('inheritance').$directory.'/'.$file)){
+        $files[$relative_path.DIR_WS_TEMPLATES.$this->getOptions('inheritance').$directory.'/'.$file] = $order++;
       }
 		}
 
