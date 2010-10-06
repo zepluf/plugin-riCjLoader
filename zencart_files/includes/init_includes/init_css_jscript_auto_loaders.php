@@ -9,8 +9,5 @@ if (!defined('IS_ADMIN_FLAG')) {
   die('Illegal Access');
 }
 
-if(!defined('MINIFY_STATUS'))
-	define('MINIFY_STATUS', 'false');
-	
 require_once(DIR_WS_CLASSES . 'class.cj_loader.php');
 $RI_CJLoader = new RICJLoader();

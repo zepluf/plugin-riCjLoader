@@ -24,17 +24,19 @@ class RICJLoader
 	function __construct()
 	{
 		global $current_page_base, $page_directory, $request_type, $template;
-		if (MINIFY_STATUS === 'true') {
-			global $db;
-			$this->options['minify'] = true;
-			$now = time();
-			$this->options['minify_time'] = (int)MINIFY_CACHE_TIME_LATEST;
-			if($now - $this->options['minify_time'] > (int)MINIFY_CACHE_TIME_LENGHT){
-				$db->Execute("UPDATE ".TABLE_CONFIGURATION." SET configuration_value = $now WHERE configuration_key = 'MINIFY_CACHE_TIME_LATEST'");
-				$this->options['minify_time'] = $now;
+		if (defined('MINIFY_STATUS')) {
+			if (MINIFY_STATUS === 'true') {
+				// @todo FIXME we shouldn't set the cache time until a minify file is successfully generated
+				global $db;
+				$this->options['minify'] = true;
+				$now = time();
+				$this->options['minify_time'] = (int)MINIFY_CACHE_TIME_LATEST;
+				if($now - $this->options['minify_time'] > (int)MINIFY_CACHE_TIME_LENGHT){
+					$db->Execute("UPDATE ".TABLE_CONFIGURATION." SET configuration_value = $now WHERE configuration_key = 'MINIFY_CACHE_TIME_LATEST'");
+					$this->options['minify_time'] = $now;
+				}
 			}
 		}
-
 		$this->template = $template;
 		$this->page_directory = $page_directory;
 		$this->request_type = $request_type;
