@@ -283,7 +283,7 @@ class RICJLoader
 		$files = $this->template->get_template_part($page_directory, '/^jscript_/', '.js');
 		$load_order = -300;
 		foreach ($files as $key => $value) {
-	    $this->addAssets(array(array("$page_directory/$value" => $load_order++)), 'js');	
+	    $this->addAssets(array("$page_directory/$value" => $load_order++), 'js');
 		}
 		
 		/**
@@ -292,7 +292,7 @@ class RICJLoader
 		$load_order = -100;
 		$files = $this->template->get_template_part($page_directory, '/^jscript_/', '.php');
 		foreach ($files as $key => $value) {
-			$this->addAssets(array(array("$page_directory/$value" => $load_order++)), 'js');	
+			$this->addAssets(array("$page_directory/$value" => $load_order++), 'js');
 		}  
 		return true;
 	}
