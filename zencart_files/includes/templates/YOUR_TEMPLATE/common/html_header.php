@@ -47,31 +47,15 @@ require(DIR_WS_MODULES . zen_get_module_directory('meta_tags.php'));
 */
 
 if($RI_CJLoader->get('status')){
-	$directory_array = $template->get_template_part(DIR_WS_TEMPLATE.'auto_loaders', '/^loader_/', '.php');
-	
-	$loaders_check = $RI_CJLoader->getOptions('loaders');
-	if($loaders_check == '*' || count($loaders_check) > 0){
-		while(list ($key, $value) = each($directory_array)) {
-		/**
-		* include content from all site-wide loader_*.php files from includes/templates/YOURTEMPLATE/jscript/auto_loaders, alphabetically.
-		*/
-			if($loaders_check == '*' || in_array($value, $loaders_check))
-				require(DIR_WS_TEMPLATE.'auto_loaders'. '/' . $value);
-		}
-	}
-	
-	if(count($loaders) > 0)	$RI_CJLoader->addLoaders($loaders, true);
-	
-	$RI_CJLoader->loadCssJsFiles();
-	$files = $RI_CJLoader->processCssJsFiles();
+	$files = $RI_CJLoader->header();
 	foreach($files['css'] as $file)
 		if($file['include']) include($file['src']);
-		else if(!$RI_CJLoader->getOptions('minify') || $file['external']) echo "<link rel=\"stylesheet\" type=\"text/css\" href='{$file['src']}' />\n";
+		else if(!$RI_CJLoader->get('minify') || $file['external']) echo "<link rel=\"stylesheet\" type=\"text/css\" href='{$file['src']}' />\n";
 		else echo "<link rel=\"stylesheet\" type=\"text/css\" href=\"min/?f={$file['src']}&amp;".$RI_CJLoader->getOptions('minify_time')."\" />\n";
 		
-	foreach($files['js'] as $file)
+	foreach($files['jscript'] as $file)
 		if($file['include']) include($file['src']);
-		else if(!$RI_CJLoader->getOptions('minify') || $file['external']) echo "<script type='text/javascript' src='{$file['src']}'></script>\n";
+		else if(!$RI_CJLoader->get('minify') || $file['external']) echo "<script type='text/javascript' src='{$file['src']}'></script>\n";
 		else echo "<script type=\"text/javascript\" src=\"min/?f={$file['src']}&amp;".$RI_CJLoader->getOptions('minify_time')."\"></script>\n";
 }
 //DEBUG: echo '<!-- I SEE cat: ' . $current_category_id . ' || vs cpath: ' . $cPath . ' || page: ' . $current_page . ' || template: ' . $current_template . ' || main = ' . ($this_is_home_page ? 'YES' : 'NO') . ' -->';

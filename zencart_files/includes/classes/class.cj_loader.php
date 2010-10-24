@@ -12,7 +12,7 @@
 
 class RICJLoader
 {
-	protected $js = array();
+	protected $jscript = array();
 	protected $css = array();
 	protected $template;
 	protected $page_directory = '';
@@ -42,11 +42,11 @@ class RICJLoader
 		$this->request_type = $request_type;
 	}
 
-	function setOptions($options){
+	function set($options){
 		$this->options = array_merge($this->options, $options);
 	}
 
-	function getOptions($key = ''){
+	function get($key = ''){
 		if(!empty($key))
 			return $this->options[$key];
 		else return $this->options;
@@ -72,8 +72,8 @@ class RICJLoader
 		$templateDir = $this->getAssetDir($extension, $directory, DIR_WS_TEMPLATE);
 		$allFiles = $this->template->get_template_part($templateDir, $file_pattern, $extension);
 
-		if($this->getOptions('inheritance') != ''){
-			$defaultDir = $this->getAssetDir($extension, $directory, DIR_WS_TEMPLATES. $this->getOptions('inheritance'));
+		if($this->get('inheritance') != ''){
+			$defaultDir = $this->getAssetDir($extension, $directory, DIR_WS_TEMPLATES. $this->get('inheritance'));
 			$allFiles = array_unique(array_merge($this->template->get_template_part($defaultDir, $file_pattern, $extension),$allFiles));
 		}
 
@@ -83,8 +83,8 @@ class RICJLoader
       if(file_exists(DIR_FS_CATALOG.DIR_WS_TEMPLATE.$directory.'/'.$file)){
         $files[$relative_path.DIR_WS_TEMPLATE.$directory.'/'.$file] = $order++;
       }
-      elseif ($this->getOptions('inheritance') != '' && file_exists(DIR_FS_CATALOG.DIR_WS_TEMPLATES.$this->getOptions('inheritance').'/'.$directory.'/'.$file)){
-        $files[$relative_path.DIR_WS_TEMPLATES.$this->getOptions('inheritance').'/'.$directory.'/'.$file] = $order++;
+      elseif ($this->get('inheritance') != '' && file_exists(DIR_FS_CATALOG.DIR_WS_TEMPLATES.$this->get('inheritance').'/'.$directory.'/'.$file)){
+        $files[$relative_path.DIR_WS_TEMPLATES.$this->get('inheritance').'/'.$directory.'/'.$file] = $order++;
       }
 		}
 
@@ -96,6 +96,18 @@ class RICJLoader
 	{
 		foreach ($files as $file => $order) {
 			$this->{$type}[] = array($file => $order);
+		}
+	}
+	
+	function addLoaderAssets($files, $type){
+		foreach ($files as $file => $order) {
+			if(!file_exists($path = DIR_WS_TEMPLATE.$type."/$file")){
+				if(!file_exists($path = $file))
+					break;
+			}//else
+				//$path = DIR_WS_CATALOG.$path;
+
+			$this->{$type}[] = array($path => $order);
 		}
 	}
 
@@ -119,7 +131,7 @@ class RICJLoader
 	}
 
 	function setCurrentPageBase(){
-		if(!$this->getOptions('admin')){
+		if(!$this->get('admin')){
 			global $current_page_base, $this_is_home_page;
 			// set current page
 			if($this_is_home_page)
@@ -154,9 +166,9 @@ class RICJLoader
 			foreach($this->loaders as $loader){
 				if(in_array('*', $loader['conditions']['pages']) || in_array($this->current_page_base, $loader['conditions']['pages'])){
 					if(isset($loader['jscript_files']))
-						$this->addAssets($loader['jscript_files'], 'js');
+						$this->addLoaderAssets($loader['jscript_files'], 'jscript');
 					if(isset($loader['css_files']))
-						$this->addAssets($loader['css_files'], 'css');
+						$this->addLoaderAssets($loader['css_files'], 'css');
 				}
 				else{
 					$load = false;
@@ -170,9 +182,9 @@ class RICJLoader
 
 						if($load){
 							if(isset($loader['jscript_files']))
-								$this->addAssets($loader['jscript_files'], 'js');
+								$this->addLoaderAssets($loader['jscript_files'], 'jscript');
 							if(isset($loader['css_files']))
-								$this->addAssets($loader['css_files'], 'css');
+								$this->addLoaderAssets($loader['css_files'], 'css');
 							break;
 						}
 					}
@@ -180,7 +192,7 @@ class RICJLoader
 			}
 		}
 
-		if($this->getOptions('load_global')) {
+		if($this->get('load_global')) {
 		/**
 		 * load all template-specific stylesheets, named like "style*.css", alphabetically
 		 */
@@ -197,13 +209,13 @@ class RICJLoader
 			 * load all site-wide jscript_*.js files from includes/templates/YOURTEMPLATE/jscript, alphabetically
 			 */
 			$files = $this->findAssets('.js', 'jscript', '/^jscript_/', -400);
-			$this->addAssets($files, 'js');
+			$this->addAssets($files, 'jscript');
 
 			/**
 	    * include content from all site-wide jscript_*.php files from includes/templates/YOURTEMPLATE/jscript, alphabetically.
 	    */
 			$files = $this->findAssets('.php', 'jscript', '/^jscript_/', -200);
-			$this->addAssets($files, 'js');
+			$this->addAssets($files, 'jscript');
 		}
 
 		/**
@@ -232,17 +244,17 @@ class RICJLoader
 			if (file_exists($perpagefile)) $this->addAssets(array(array(trim($value, '/') . '.php' => $load_order++)), 'css');
 
 			$perpagefile = $this->getAssetDir('.js', 'jscript') . $value . '.js';
-			if (file_exists($perpagefile)) $this->addAssets(array(array(trim($value, '/') . '.js' => $load_order++)), 'js');
+			if (file_exists($perpagefile)) $this->addAssets(array(array(trim($value, '/') . '.js' => $load_order++)), 'jscript');
 
 			$perpagefile = $this->getAssetDir('.php', 'jscript') . $value . '.php';
-			if (file_exists($perpagefile)) $this->addAssets(array(array(trim($value, '/') . '.php' => $load_order++)), 'js');
+			if (file_exists($perpagefile)) $this->addAssets(array(array(trim($value, '/') . '.php' => $load_order++)), 'jscript');
 
 		}
 
 		/**
 		 * load printer-friendly stylesheets -- named like "print*.css", alphabetically
 		 */
-		if($this->getOptions('load_print')) {
+		if($this->get('load_print')) {
 			$directory_array = $this->findAssets('.css','css', '/^print/');
 			// TODO: don't output link tags directly from here
 			foreach ($directory_array as $key => $value) {
@@ -266,14 +278,14 @@ class RICJLoader
 			$this->addAssets($files, 'css');
 
 			$files = $this->findAssets('.js', 'jscript', "/^{$browser_name}-/", -500);
-			$this->addAssets($files, 'js');
+			$this->addAssets($files, 'jscript');
 
 			// get the browser version specific files
 			$files = $this->findAssets('.css', 'css', "/^{$browser_name}{$browser_version}-/", -100);
 			$this->addAssets($files, 'css');
 
 			$directory_array = $this->findAssets('.js', 'jscript', "/^{$browser_name}{$browser_version}-/", -500);
-			$this->addAssets($files, 'js');
+			$this->addAssets($files, 'jscript');
 		}
 
 
@@ -283,7 +295,7 @@ class RICJLoader
 		$files = $this->template->get_template_part($page_directory, '/^jscript_/', '.js');
 		$load_order = -300;
 		foreach ($files as $key => $value) {
-	    $this->addAssets(array("$page_directory/$value" => $load_order++), 'js');
+	    $this->addAssets(array("$page_directory/$value" => $load_order++), 'jscript');
 		}
 
 		/**
@@ -292,7 +304,7 @@ class RICJLoader
 		$load_order = -100;
 		$files = $this->template->get_template_part($page_directory, '/^jscript_/', '.php');
 		foreach ($files as $key => $value) {
-			$this->addAssets(array("$page_directory/$value" => $load_order++), 'js');
+			$this->addAssets(array("$page_directory/$value" => $load_order++), 'jscript');
 		}
 		return true;
 	}
@@ -300,9 +312,9 @@ class RICJLoader
 	function processCssJsFiles()
 	{
 		$css_files = $this->loadFiles($this->css);
-		$js_files = $this->loadFiles($this->js);
+		$js_files = $this->loadFiles($this->jscript);
 
-		$files['js'] = $this->getFiles($js_files);
+		$files['jscript'] = $this->getFiles($js_files);
 		$files['css'] = $this->getFiles($css_files);
 		return $files;
 	}
@@ -333,7 +345,7 @@ class RICJLoader
 			if ($ext == 'php') {
 				$result[] = array('src' => $file_absolute_path, 'include' => true);
 				continue;
-			} elseif ($this->getOptions('minify')) {
+			} elseif ($this->get('minify')) {
 				if (strlen($files_paths) > ((int)MINIFY_MAX_URL_LENGHT - 20)) {
 					//$result[] = array('string' => sprintf($request_string, trim($files_paths, ',')), 'include' => false);
 					$files_paths = $file_relative_path.',';
@@ -346,9 +358,16 @@ class RICJLoader
 			}
 		}
 		// one last time
-		if (!empty($files_paths) && $this->getOptions('minify')) {
+		if (!empty($files_paths) && $this->get('minify')) {
 			$result[] = array('src' => trim($files_paths, ','), 'include' => false, 'external' => false);
 		}
 		return $result;
+	}
+	
+	/**
+	 * 
+	 */
+	public function header(){
+		return $this->processCssJsFiles();
 	}
 }
