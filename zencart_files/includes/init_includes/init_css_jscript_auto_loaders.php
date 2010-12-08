@@ -25,4 +25,3 @@ if($loaders_check == '*' || count($loaders_check) > 0){
 }
 
 if(count($loaders) > 0)	$RI_CJLoader->addLoaders($loaders, true);
-$RI_CJLoader->loadCssJsFiles();

@@ -68,7 +68,6 @@ class RICJLoader
 	 */
 	function findAssets($extension, $directory, $file_pattern = '', $order = 0)
 	{
-		$relative_path = $this->request_type == 'NONSSL' ? DIR_WS_CATALOG : DIR_WS_HTTPS_CATALOG;
 		$templateDir = $this->getAssetDir($extension, $directory, DIR_WS_TEMPLATE);
 		$allFiles = $this->template->get_template_part($templateDir, $file_pattern, $extension);
 
@@ -81,10 +80,10 @@ class RICJLoader
 		foreach ($allFiles as $file) {
 		// case 1: file is in server but full path not passed, assuming it is under corresponding template css/js folder
       if(file_exists(DIR_FS_CATALOG.DIR_WS_TEMPLATE.$directory.'/'.$file)){
-        $files[$relative_path.DIR_WS_TEMPLATE.$directory.'/'.$file] = $order++;
+        $files[DIR_WS_TEMPLATE.$directory.'/'.$file] = $order++;
       }
       elseif ($this->get('inheritance') != '' && file_exists(DIR_FS_CATALOG.DIR_WS_TEMPLATES.$this->get('inheritance').'/'.$directory.'/'.$file)){
-        $files[$relative_path.DIR_WS_TEMPLATES.$this->get('inheritance').'/'.$directory.'/'.$file] = $order++;
+        $files[DIR_WS_TEMPLATES.$this->get('inheritance').'/'.$directory.'/'.$file] = $order++;
       }
 		}
 
@@ -191,7 +190,7 @@ class RICJLoader
 				}
 			}
 		}
-
+		
 		if($this->get('load_global')) {
 		/**
 		 * load all template-specific stylesheets, named like "style*.css", alphabetically
@@ -238,16 +237,16 @@ class RICJLoader
 		$load_order = -200;
 		foreach ($sheets_array as $key => $value) {
 			$perpagefile = $this->getAssetDir('.css', 'css') . $value . '.css';
-			if (file_exists($perpagefile)) $this->addAssets(array(array(trim($value, '/') . '.css' => $load_order++)), 'css');
+			if (file_exists($perpagefile)) $this->addAssets(array($perpagefile => $load_order++), 'css');
 
 			$perpagefile = $this->getAssetDir('.php', 'css') . $value . '.php';
-			if (file_exists($perpagefile)) $this->addAssets(array(array(trim($value, '/') . '.php' => $load_order++)), 'css');
+			if (file_exists($perpagefile)) $this->addAssets(array($perpagefile => $load_order++), 'css');
 
 			$perpagefile = $this->getAssetDir('.js', 'jscript') . $value . '.js';
-			if (file_exists($perpagefile)) $this->addAssets(array(array(trim($value, '/') . '.js' => $load_order++)), 'jscript');
+			if (file_exists($perpagefile)) $this->addAssets(array($perpagefile => $load_order++), 'jscript');
 
 			$perpagefile = $this->getAssetDir('.php', 'jscript') . $value . '.php';
-			if (file_exists($perpagefile)) $this->addAssets(array(array(trim($value, '/') . '.php' => $load_order++)), 'jscript');
+			if (file_exists($perpagefile)) $this->addAssets(array($perpagefile => $load_order++), 'jscript');
 
 		}
 
@@ -329,9 +328,10 @@ class RICJLoader
 	{
 		$files_paths = '';
 		$result = array();
+		$relative_path = $this->request_type == 'NONSSL' ? DIR_WS_CATALOG : DIR_WS_HTTPS_CATALOG;
 		foreach ($files as $file => $order) {
 			$file_absolute_path = DIR_FS_CATALOG.$file;
-			$file_relative_path = $file;
+			$file_relative_path = $relative_path.$file;
 
 			if (substr($file, 0, 4) == 'http') {
 				// TODO: do the outputting formatting all in one place
@@ -343,11 +343,15 @@ class RICJLoader
 			// if we encounter php, unfortunately we will have to include it for now
 			// another solution is to put everything into 1 file, but we will have to solve @import
 			if ($ext == 'php') {
+				if(!empty($files_paths)){
+					$result[] = array('src' => trim($files_paths, ','), 'include' => false, 'external' => false);
+					$files_paths = '';
+				}
 				$result[] = array('src' => $file_absolute_path, 'include' => true);
 				continue;
 			} elseif ($this->get('minify')) {
 				if (strlen($files_paths) > ((int)MINIFY_MAX_URL_LENGHT - 20)) {
-					//$result[] = array('string' => sprintf($request_string, trim($files_paths, ',')), 'include' => false);
+					$result[] = array('src' => trim($files_paths, ','), 'include' => false);
 					$files_paths = $file_relative_path.',';
 				} else {
 					//$result[] = array('string' => sprintf($request_string, $file_relative_path), 'include' => false);

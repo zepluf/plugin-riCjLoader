@@ -46,17 +46,18 @@ require(DIR_WS_MODULES . zen_get_module_directory('meta_tags.php'));
 * load the loader files
 */
 
-if($RI_CJLoader->get('status')){
+if($RI_CJLoader->get('status') && (!isset($Ajax) || !$Ajax->status())){
+	$RI_CJLoader->loadCssJsFiles();
 	$files = $RI_CJLoader->header();
 	foreach($files['css'] as $file)
 		if($file['include']) include($file['src']);
 		else if(!$RI_CJLoader->get('minify') || $file['external']) echo "<link rel=\"stylesheet\" type=\"text/css\" href='{$file['src']}' />\n";
-		else echo "<link rel=\"stylesheet\" type=\"text/css\" href=\"min/?f={$file['src']}&amp;".$RI_CJLoader->getOptions('minify_time')."\" />\n";
+		else echo "<link rel=\"stylesheet\" type=\"text/css\" href=\"min/?f={$file['src']}&amp;".$RI_CJLoader->get('minify_time')."\" />\n";
 		
 	foreach($files['jscript'] as $file)
 		if($file['include']) include($file['src']);
 		else if(!$RI_CJLoader->get('minify') || $file['external']) echo "<script type='text/javascript' src='{$file['src']}'></script>\n";
-		else echo "<script type=\"text/javascript\" src=\"min/?f={$file['src']}&amp;".$RI_CJLoader->getOptions('minify_time')."\"></script>\n";
+		else echo "<script type=\"text/javascript\" src=\"min/?f={$file['src']}&amp;".$RI_CJLoader->get('minify_time')."\"></script>\n";
 }
 //DEBUG: echo '<!-- I SEE cat: ' . $current_category_id . ' || vs cpath: ' . $cPath . ' || page: ' . $current_page . ' || template: ' . $current_template . ' || main = ' . ($this_is_home_page ? 'YES' : 'NO') . ' -->';
 ?>
