@@ -55,7 +55,7 @@ class RICJLoader
 	/**
 	 * Get asset directory
 	 */
-	function getAssetDir($extension, $directory, $template = DIR_WS_TEMPLATES)
+	function getAssetDir($extension, $directory, $template = DIR_WS_TEMPLATE)
 	{
 		return $this->template->get_template_dir($extension, $template, $this->current_page_base, $directory);
 	}
@@ -68,7 +68,7 @@ class RICJLoader
 	 */
 	function findAssets($extension, $directory, $file_pattern = '', $order = 0)
 	{
-		$templateDir = $this->getAssetDir($extension, $directory, DIR_WS_TEMPLATES);
+		$templateDir = $this->getAssetDir($extension, $directory, DIR_WS_TEMPLATE);
 		$allFiles = $this->template->get_template_part($templateDir, $file_pattern, $extension);
 
 		if($this->get('inheritance') != ''){
@@ -79,8 +79,8 @@ class RICJLoader
 		$files = array();
 		foreach ($allFiles as $file) {
 		// case 1: file is in server but full path not passed, assuming it is under corresponding template css/js folder
-      if(file_exists(DIR_FS_CATALOG.DIR_WS_TEMPLATES.$directory.'/'.$file)){
-        $files[DIR_WS_TEMPLATES.$directory.'/'.$file] = $order++;
+      if(file_exists(DIR_FS_CATALOG.DIR_WS_TEMPLATE.$directory.'/'.$file)){
+        $files[DIR_WS_TEMPLATE.$directory.'/'.$file] = $order++;
       }
       elseif ($this->get('inheritance') != '' && file_exists(DIR_FS_CATALOG.DIR_WS_TEMPLATES.$this->get('inheritance').'/'.$directory.'/'.$file)){
         $files[DIR_WS_TEMPLATES.$this->get('inheritance').'/'.$directory.'/'.$file] = $order++;
@@ -100,7 +100,7 @@ class RICJLoader
 	
 	function addLoaderAssets($files, $type){
 		foreach ($files as $file => $order) {
-			if(!file_exists($path = DIR_WS_TEMPLATES.$type."/$file")){
+			if(!file_exists($path = DIR_WS_TEMPLATE.$type."/$file")){
 				if(!file_exists($path = $file))
 					break;
 			}//else
@@ -320,7 +320,7 @@ class RICJLoader
 
 	function getPath($file, $type = 'jscript'){
 		$path_info = pathinfo($file);
-		return array('extension' => $path_info['extension'], 'path' => DIR_WS_TEMPLATES.$type.'/'.$path_info['dirname'].$file_name);
+		return array('extension' => $path_info['extension'], 'path' => DIR_WS_TEMPLATE.$type.'/'.$path_info['dirname'].$file_name);
 	}
 
 
