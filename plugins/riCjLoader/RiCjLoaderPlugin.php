@@ -90,7 +90,10 @@ class RiCjLoaderPlugin
 		return $files;
 	}
 
-
+	function addLibs($libs){
+		
+	}
+	
 	function addAssets($files, $type)
 	{
 		foreach ($files as $file => $order) {
@@ -164,6 +167,8 @@ class RiCjLoaderPlugin
 		if((is_array($this->loaders)) && count($this->loaders) > 0)	{
 			foreach($this->loaders as $loader){
 				if(in_array('*', $loader['conditions']['pages']) || in_array($this->current_page_base, $loader['conditions']['pages'])){
+					if(isset($loader['libs']))
+						$this->addLibs($loader['libs']);
 					if(isset($loader['jscript_files']))
 						$this->addLoaderAssets($loader['jscript_files'], 'jscript');
 					if(isset($loader['css_files']))
@@ -180,6 +185,8 @@ class RiCjLoaderPlugin
 						else $load = $function();
 
 						if($load){
+							if(isset($loader['libs']))
+								$this->addLibs($loader['libs']);
 							if(isset($loader['jscript_files']))
 								$this->addLoaderAssets($loader['jscript_files'], 'jscript');
 							if(isset($loader['css_files']))

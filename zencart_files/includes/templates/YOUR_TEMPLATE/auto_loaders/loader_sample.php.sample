@@ -26,6 +26,7 @@
 $loaders[] = array('conditions' => array('pages' => $pages, 'call_backs' => array('is_logged_in','class_name,method_name')),
                    // the "key" of this associate array is the "path" which is relative to the css or jscript folder
                    // the "value" is the order the file should be loaded
+                   'libs' => array('jquery' => array('min' => '1.4.2')),
                    'jscript_files' => array('jquery/jquery-1.2.6.min.js' => 1,
                                             'test.php' => 11),
                    'css_files' => array('mycss/something.css'=> 11,
