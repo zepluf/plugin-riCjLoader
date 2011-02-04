@@ -10,7 +10,7 @@
  * All .php files can be manipulated by PHP when they're called, and are copied in-full to the browser page
  */
 
-class RICJLoader
+class RiCjLoaderPlugin
 {
 	protected $jscript = array();
 	protected $css = array();

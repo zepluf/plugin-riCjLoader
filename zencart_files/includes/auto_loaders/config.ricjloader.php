@@ -10,4 +10,4 @@ if (!defined('IS_ADMIN_FLAG')) {
 } 
              	
 $autoLoadConfig[200][] = array('autoType'=>'init_script',
-                                'loadFile'=> 'init_css_jscript_auto_loaders.php');
+                                'loadFile'=> 'init_ricjloader.php');

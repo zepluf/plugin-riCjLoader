@@ -9,8 +9,8 @@ if (!defined('IS_ADMIN_FLAG')) {
   die('Illegal Access');
 }
 
-require_once(DIR_WS_CLASSES . 'class.cj_loader.php');
-$RI_CJLoader = new RICJLoader();
+require_once(DIR_FS_CATALOG . 'plugins/RiCjLoaderPlugin.php');
+$RI_CJLoader = new RiCjLoaderPlugin();
 $directory_array = $template->get_template_part(DIR_WS_TEMPLATE.'auto_loaders', '/^loader_/', '.php');
 	
 $loaders_check = $RI_CJLoader->get('loaders');
