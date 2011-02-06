@@ -18,6 +18,7 @@ class RiCjLoaderPlugin
 	protected $page_directory = '';
 	protected $current_page_base = '';
 	protected $request_type;
+	protected $libs;
 	protected $loaders = array();
 	protected $options = array('admin' => false, 'loaders' => '*', 'status' => true, 'ajax' => false, 'load_global' => true, 'load_print' => true, 'minify' => false, 'minify_time' => 0, 'inheritance' => '');
 
@@ -90,8 +91,52 @@ class RiCjLoaderPlugin
 		return $files;
 	}
 
+	function processLibs () 
+	{
+		foreach ($this->libs as $lib => $options)
+		{
+			// sttempt to load the config file
+			if (file_exists(DIR_FS_CATALOG . 'plugins/riCjLoader/config/' . $lib . '.php'))
+			{
+				include (DIR_FS_CATALOG . 'plugins/riCjLoader/config/' . $lib . '.php');
+				foreach ($options as $option)
+				{
+					$lib_versions = array_keys($libs[$lib]);
+					if (isset($option['min']) && (($pos = array_search($option['min'], $lib_versions)) !== false))
+					{
+						$lib_versions = array_slice($lib_versions, $pos);
+					}
+					
+				if (isset($option['max']) && (($pos = array_search($option['max'], $lib_versions)) !== false))
+					{
+						array_splice($lib_versions, $pos);
+					}
+				}
+				
+				if (empty($lib_versions)) 
+				{
+					// houston we have a problem
+					// TODO: we need to somehow print out the error in this case
+				}
+				else 
+				{
+					// we prefer the latest version
+					$lib_version = end($lib_versions);
+					// add the files
+					if (isset($libs[$lib]['css_files']))
+						$this->addAssets(array('libs/' . $lib . '/' . $lib_version . '.css'), 'jscript');
+					if (isset($libs[$lib]['jscript']))
+						$this->addAssets(array('libs/' . $lib . '/' . $lib_version . '.js'), 'jscript');
+				}
+			}			
+		}
+	}
+	
 	function addLibs($libs){
-		
+		foreach ($libs as $lib => $option)
+		{
+			$this->libs[$lib][] = $option;
+		}
 	}
 	
 	function addAssets($files, $type)
