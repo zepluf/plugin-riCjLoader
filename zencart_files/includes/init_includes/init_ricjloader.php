@@ -9,7 +9,7 @@ if (!defined('IS_ADMIN_FLAG')) {
   die('Illegal Access');
 }
 
-require_once(DIR_FS_CATALOG . 'plugins/RiCjLoaderPlugin.php');
+require_once(DIR_FS_CATALOG . 'plugins/riCjLoader/RiCjLoaderPlugin.php');
 $RI_CJLoader = new RiCjLoaderPlugin();
 $directory_array = $template->get_template_part(DIR_WS_TEMPLATE.'auto_loaders', '/^loader_/', '.php');
 	
