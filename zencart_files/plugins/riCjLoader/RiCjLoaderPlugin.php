@@ -91,24 +91,30 @@ class RiCjLoaderPlugin
 		return $files;
 	}
 
+	/**
+	 * 
+	 * We process libs here
+	 * TODO: add basic version comparison
+	 */
 	function processLibs () 
 	{
 		$css_files = $jscript_files = array();
+		$load_order = -99999; // we set the libs to load first
 		foreach ($this->libs as $lib => $options)
 		{
-			// sttempt to load the config file
+			// attempt to load the config file
 			if (file_exists(DIR_FS_CATALOG . 'plugins/riCjLoader/config/' . $lib . '.php'))
 			{
 				include (DIR_FS_CATALOG . 'plugins/riCjLoader/config/' . $lib . '.php');
 				foreach ($options as $option)
 				{
 					$lib_versions = array_keys($libs[$lib]);
-					if (isset($option['min']) && (($pos = array_search($option['min'], $lib_versions)) !== false))
+					if (isset($option['min']) && (($pos = array_search($option['min'], $lib_versions)) != 0))
 					{
 						$lib_versions = array_slice($lib_versions, $pos);
 					}
 					
-					if (isset($option['max']) && (($pos = array_search($option['max'], $lib_versions)) !== false))
+					if (isset($option['max']) && (($pos = array_search($option['max'], $lib_versions)) != 0) && $pos++ < count($lib_versions))
 					{
 						array_splice($lib_versions, $pos);
 					}
@@ -123,33 +129,32 @@ class RiCjLoaderPlugin
 				{
 					// we prefer the latest version
 					$lib_version = end($lib_versions);
-					$load_order = 0;
 					// add the files
 					if (isset($libs[$lib][$lib_version]['css_files']))
 						foreach ($libs[$lib][$lib_version]['css_files'] as $css_file => $css_file_options)
 						{
-							if(!$this->get('cdn')){
-								$file = !empty($css_file_options['local']) ? $css_file_options['local'] : $css_file;
-								$css_files['libs/' . $lib . '/' . $lib_version . '/' . $file] = $load_order++;
+							if($this->get('cdn') && isset($css_file_options['cdn'])){
+								$file = $this->request_type == 'NONSSL' ? $css_file_options['cdn']['http'] : $css_file_options['cdn']['https'];
+								$css_files[$file] = $load_order++;
 							}
 							else
 							{
-								$file = $this->request_type == 'NONSSL' ? $css_file_options['cdn']['http'] : $css_file_options['cdn']['https'];
-								$css_files[$file] = $load_order++;
+								$file = !empty($css_file_options['local']) ? $css_file_options['local'] : $css_file;
+								$css_files['libs/' . $lib . '/' . $lib_version . '/' . $file] = $load_order++;
 							}	
 						}
 						
 					if (isset($libs[$lib][$lib_version]['jscript_files']))
 						foreach ($libs[$lib][$lib_version]['jscript_files'] as $jscript_file => $jscript_file_options)
 						{
-							if(!$this->get('cdn')){
-								$file = !empty($jscript_file_options['local']) ? $jscript_file_options['local'] : $jscript_file;
-								$jscript_files['libs/' . $lib . '/' . $lib_version . '/' . $file] = $load_order++;
+							if($this->get('cdn') && isset($jscript_file_options['cdn'])){
+								$file = $this->request_type == 'NONSSL' ? $jscript_file_options['cdn']['http'] : $jscript_file_options['cdn']['https'];
+								$jscript_files[$file] = $load_order++;		
 							}
 							else
 							{
-								$file = $this->request_type == 'NONSSL' ? $jscript_file_options['cdn']['http'] : $jscript_file_options['cdn']['https'];
-								$jscript_files[$file] = $load_order++;
+								$file = !empty($jscript_file_options['local']) ? $jscript_file_options['local'] : $jscript_file;
+								$jscript_files['libs/' . $lib . '/' . $lib_version . '/' . $file] = $load_order++;
 							}	
 						}
 				}
