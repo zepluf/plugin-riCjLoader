@@ -20,7 +20,7 @@ class RiCjLoaderPlugin
 	protected $request_type;
 	protected $libs;
 	protected $loaders = array();
-	protected $options = array('admin' => false, 'loaders' => '*', 'status' => true, 'ajax' => false, 'load_global' => true, 'load_print' => true, 'minify' => false, 'minify_time' => 0, 'inheritance' => '');
+	protected $options = array('cdn' => false, 'admin' => false, 'loaders' => '*', 'status' => true, 'ajax' => false, 'load_global' => true, 'load_print' => true, 'minify' => false, 'minify_time' => 0, 'inheritance' => '');
 
 	function __construct()
 	{
@@ -182,11 +182,9 @@ class RiCjLoaderPlugin
 	
 	function addLoaderAssets($files, $type){
 		foreach ($files as $file => $order) {
-			if(!file_exists($path = DIR_WS_TEMPLATE.$type."/$file")){
-				if(!file_exists($path = $file))
-					break;
-			}//else
-				//$path = DIR_WS_CATALOG.$path;
+			if(!file_exists($path = DIR_WS_TEMPLATE.$type . '/' . $file))
+				if(!file_exists($path = DIR_WS_CATALOG . '/' . $file))
+				  $path = $file;
 
 			$this->{$type}[] = array($path => $order);
 		}
