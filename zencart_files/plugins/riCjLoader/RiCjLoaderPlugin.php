@@ -346,8 +346,8 @@ class RiCjLoaderPlugin
 			}
 		}
 
-		if (file_exists(DIR_WS_CLASSES . 'browser.php') && floatval(phpversion()) > 5) {
-			include(DIR_WS_CLASSES . 'browser.php');
+		if (file_exists(DIR_FS_CATALOG . 'plugins/riCjLoader/lib/browser.php') && floatval(phpversion()) > 5) {
+			include(DIR_FS_CATALOG . 'plugins/riCjLoader/lib/browser.php');
 			$browser = new _Browser();
 			$browser_name = preg_replace("/[^a-zA-Z0-9s]/", "-", strtolower($browser->getBrowser()));
 			$browser_version = floor($browser->getVersion());
