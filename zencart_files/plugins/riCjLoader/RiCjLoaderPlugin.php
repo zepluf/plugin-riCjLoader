@@ -55,6 +55,27 @@ class RiCjLoaderPlugin
 		$this->request_type = $request_type;
 	}
 
+	function autoloadLoaders(){	
+		if($this->get('loaders') == '*')
+		{
+			$directory_array = $this->template->get_template_part(DIR_WS_TEMPLATE.'auto_loaders', '/^loader_/', '.php');
+			while(list ($key, $value) = each($directory_array)) {
+			/**
+			* include content from all site-wide loader_*.php files from includes/templates/YOURTEMPLATE/jscript/auto_loaders, alphabetically.
+			*/
+				require(DIR_WS_TEMPLATE.'auto_loaders'. '/' . $value);
+			}
+		}
+		elseif(count($this->get('loaders')) > 0)
+		{
+			foreach($this->get('loaders') as $loader)
+				if(file_exists($path = DIR_WS_TEMPLATE.'auto_loaders'. '/loader_' . $loader .'.php')) require($path);
+		}
+		else 
+			return;
+		if(count($loaders) > 0)	$this->addLoaders($loaders, true);		
+	}
+	
 	function set($options){
 		$this->options = array_merge($this->options, $options);
 	}
@@ -109,7 +130,9 @@ class RiCjLoaderPlugin
 	 * TODO: add basic version comparison
 	 */
 	function processLibs () 
-	{
+	{   
+	    if (count($this->libs) == 0) return;
+	    
 		$css_files = $jscript_files = array();
 		$load_order = -99999; // we set the libs to load first
 		foreach ($this->libs as $lib => $options)
@@ -118,17 +141,17 @@ class RiCjLoaderPlugin
 			if (file_exists(DIR_FS_CATALOG . 'plugins/riCjLoader/config/' . $lib . '.php'))
 			{
 				include (DIR_FS_CATALOG . 'plugins/riCjLoader/config/' . $lib . '.php');
+				$lib_versions = array_keys($libs[$lib]);
 				foreach ($options as $option)
 				{
-					$lib_versions = array_keys($libs[$lib]);
 					if (isset($option['min']) && (($pos = array_search($option['min'], $lib_versions)) != 0))
 					{
 						$lib_versions = array_slice($lib_versions, $pos);
 					}
 					
-					if (isset($option['max']) && (($pos = array_search($option['max'], $lib_versions)) != 0) && $pos++ < count($lib_versions))
+					if (isset($option['max']) && (($pos = array_search($option['max'], $lib_versions)) < count($lib_versions)-1))
 					{
-						array_splice($lib_versions, $pos);
+						array_splice($lib_versions, $pos+1);
 					}
 				}
 				
@@ -197,7 +220,7 @@ class RiCjLoaderPlugin
 			$error = false;
 			if(!file_exists($path = DIR_WS_TEMPLATE.$type . '/' . $file))
 				if(!file_exists($path = DIR_WS_CATALOG . '/' . $file))
-				  	if(in_array(current(explode(':', $string), $file), $this->options['supported_externals']))
+				  	if(in_array(current(explode(':', $file)), $this->options['supported_externals']))
 						$path = $file;
 					else
 						$error = true; 
@@ -263,7 +286,7 @@ class RiCjLoaderPlugin
 		 */
 		if((is_array($this->loaders)) && count($this->loaders) > 0)	{
 			foreach($this->loaders as $loader){
-				if(in_array('*', $loader['conditions']['pages']) || in_array($this->current_page_base, $loader['conditions']['pages'])){
+				if(isset($loader['conditions']['pages']) && (in_array('*', $loader['conditions']['pages']) || in_array($this->current_page_base, $loader['conditions']['pages']))){
 					if(isset($loader['libs']))
 						$this->addLibs($loader['libs']);
 					if(isset($loader['jscript_files']))

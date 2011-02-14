@@ -47,6 +47,7 @@ require(DIR_WS_MODULES . zen_get_module_directory('meta_tags.php'));
 */
 
 if($RI_CJLoader->get('status') && (!isset($Ajax) || !$Ajax->status())){
+	$RI_CJLoader->autoloadLoaders();
 	$RI_CJLoader->loadCssJsFiles();
 	$files = $RI_CJLoader->header();
 	foreach($files['css'] as $file)
