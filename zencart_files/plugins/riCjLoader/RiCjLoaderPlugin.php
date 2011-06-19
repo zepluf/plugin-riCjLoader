@@ -31,7 +31,7 @@ class RiCjLoaderPlugin
 		'minify' => false, 
 		'minify_time' => 0, 
 		'inheritance' => '',
-		'supported_externals' => array('http', 'https')
+		'supported_externals' => array('http', 'https', '//')
 	);
 
 	function __construct()
@@ -220,7 +220,7 @@ class RiCjLoaderPlugin
 			$error = false;
 			if(!file_exists($path = DIR_WS_TEMPLATE.$type . '/' . $file))
 				if(!file_exists($path = DIR_WS_CATALOG . '/' . $file))
-				  	if(in_array(current(explode(':', $file)), $this->options['supported_externals']))
+				  	if($this->strposArray($file, $this->options['supported_externals']) !== false)
 						$path = $file;
 					else
 						$error = true; 
@@ -231,6 +231,25 @@ class RiCjLoaderPlugin
 				// some kind of error logging here
 			}
 		}
+	}
+
+	function strposArray($haystack, $needles) {
+    	$pos = false;
+		if ( is_array($needles) ) {
+        	foreach ($needles as $str) {
+            	if ( is_array($str) ) {
+                	$pos = $this->strposArray($haystack, $str);
+            	} else {
+                	$pos = strpos($haystack, $str);
+            	}
+            	if ($pos !== FALSE) {
+                	break;
+            	}
+        	}
+    	} else {
+        	$pos = strpos($haystack, $needles);
+    	}
+		return $pos;
 	}
 
 	function loadFiles($files){
@@ -461,7 +480,7 @@ class RiCjLoaderPlugin
 			$file_absolute_path = DIR_FS_CATALOG.$file;
 			$file_relative_path = $relative_path.$file;
 
-			if (substr($file, 0, 4) == 'http') {
+			if($this->strposArray($file, $this->options['supported_externals']) !== false) {
 				// TODO: do the outputting formatting all in one place
         		$result[] = array('src' => $file, 'include' => false, 'external' => true);
 				continue;
