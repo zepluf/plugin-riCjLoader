@@ -33,5 +33,16 @@ $libs['jquery'] = array(
 				)
 			)
 		)
+	),
+	'1.6.4' => array(
+		'jscript_files' => array(
+			'jquery.js' => array(
+				'local' => 'jquery.js', 
+				'cdn' => array(
+					'http' => 'http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js', 
+					'https' => 'https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js'
+				)
+			)
+		)
 	)
 );
