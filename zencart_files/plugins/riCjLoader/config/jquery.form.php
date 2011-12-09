@@ -7,7 +7,7 @@ $libs['jquery.form'] = array(
 				'local' => 'form.js', 
 			)
 		)
-	)
+	),
 	'2.84' => array(
 		'jscript_files' => array(
 			'form.js' => array(
