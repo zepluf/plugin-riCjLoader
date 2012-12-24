@@ -1,0 +1,12 @@
+{
+    "name": "zepluf/riCjLoader",
+    "description": "The \"CSS - JS loader\" plugin",
+    "license": "custom",
+    "version": "1.0.1",
+    "autoload": {
+        "psr-0": { "": "src/" }
+    },
+    "require": {
+        "php": ">=5.3.3"
+    }
+}
