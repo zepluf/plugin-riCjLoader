@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin>
+	<name>Css Javascript Loader</name>
+	<summary>
+		* Allowing different plugins to minimize javascript conflicts
+		* Speeding up the site performance by minifying and combining css/javascript files
+		* Loading files that are located outside of the root folder
+		* Loading the files from right within the template files
+		* Loading javascript files as late as possible (to speed up page rendering)
+	</summary>
+	<preload>
+		<frontend>true</frontend>		
+		<backend>true</backend>
+	</preload>
+	<notes>
+ 	</notes>
+	<authors>
+		<author>
+			<name>Raine Ng</name>
+			<email>support@rubikin.com</email>
+		</author>
+	</authors>
+	<released>May 10th 2012</released>
+	<release>1.0.1</release>
+	<license uri="http://www.symfony-project.org/license">MIT license</license>
+	<dependencies>
+  		<required>
+   			<php>
+    			<min>5.3.0</min>
+   			</php>
+   		</required>
+   		<plugins>   
+   			<plugin>
+   				<codename>riCache</codename>
+   				<min>1.0</min>
+   			</plugin>			  			   				   			
+   		</plugins>
+	</dependencies>
+	<changelog>
+	<release>
+   			<version>
+    			<release>1.0.1</release>    			
+   			</version>
+   			<license uri="http://www.symfony-project.com/license">MIT license</license>
+   			<released>May 20th 2012</released>
+   			<notes>
+				* bug fixes
+   			</notes>
+  		</release>
+  		<release>
+   			<version>
+    			<release>1.0.0</release>    			
+   			</version>
+   			<license uri="http://www.symfony-project.com/license">MIT license</license>
+   			<released>May 20th 2012</released>
+   			<notes>
+				* first official release for ZePLUF
+   			</notes>
+  		</release>
+  </changelog>
+</plugin>
