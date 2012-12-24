@@ -1,0 +1,11 @@
+settings:
+  cache: true
+  cdn: true
+  load_global: true
+  load_loaders: true
+  supported_externals: ['http', 'https', '//']
+  browser: ricjloader.browser
+  handlers: {css: ricjloader.css_handler, js: ricjloader.js_handler}
+  filters:
+    ricjLoader.minify_filter: {combine: false}
+

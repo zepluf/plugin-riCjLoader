@@ -27,7 +27,7 @@ function get_content($data)
 <h2><?php echo $data['title']; ?></h2>
 <?php echo $data['explain']; ?>
 <ul>
-	<li><a href="./">Last-Modified is known : simple usage</a></li>
+	<li><a href="">Last-Modified is known : simple usage</a></li>
 	<li><a href="2.php">Last-Modified is known : add Content-Length</a></li>
 	<li><a href="3.php">Last-Modified is unknown : use hash of content for ETag</a></li>
 	<li><a href="4.php">ConditionalGet + Encoder</a></li>

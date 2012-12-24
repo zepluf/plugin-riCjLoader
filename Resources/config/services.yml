@@ -1,0 +1,23 @@
+parameters:
+  ricjLoader.cache_path: %web_cache_dir%/ricjloader/
+
+services:
+  ricjLoader.loader_helper:
+    class:        plugins\riCjLoader\LoaderHelper
+    arguments:    [@service_container]
+    tags:
+      - {name: templating.helper, alias: loader}
+  ricjLoader.browser:
+    class:        plugins\riCjLoader\Browser\Browser
+  ricjLoader.css_handler:
+    class:        plugins\riCjLoader\Handler\CssHandler
+    arguments:    [@riCache.Cache, %ricjLoader.cache_path%, @utility.file]
+    tags:
+      - {name: ricjloader.handler}
+  ricjLoader.js_handler:
+    class:        plugins\riCjLoader\Handler\JsHandler
+    tags:
+      - {name: ricjloader.handler}
+  ricjLoader.minify_filter:
+    class:        plugins\riCjLoader\Filter\MinifyFilter
+    arguments: [@riCache.Cache, %ricjLoader.cache_path%, @utility.file]
