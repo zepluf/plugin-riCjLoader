@@ -1,5 +1,6 @@
 {
     "name": "zepluf/plugin-ricjloader",
+    "replace": {"zepluf/ricjloader": "self.version"},
     "description": "The \"CSS - JS loader\" plugin",
     "license": "custom",
     "version": "1.0.1",
