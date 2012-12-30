@@ -3,10 +3,11 @@
 namespace plugins\riCjLoader\Handler;
 
 class JsHandler extends Handler{
-    protected 
-        $file_pattern = "<script type=\"text/javascript\" src=\"%s\"></script>\n",        
-        $extension = 'js',
-        $template_base_dir = 'jscript';
+    protected $file_pattern = "<script type=\"text/javascript\" src=\"%s\"></script>\n";
+
+    protected $extension = 'js';
+
+    protected $template_base_dir = 'jscript';
     
     protected function processInline($content)
     {

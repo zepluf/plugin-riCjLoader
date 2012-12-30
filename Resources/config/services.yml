@@ -4,20 +4,26 @@ parameters:
 services:
   ricjLoader.loader_helper:
     class:        plugins\riCjLoader\LoaderHelper
-    arguments:    [@service_container]
+    arguments:    [@settings, @ricjLoader.browser, @ricjLoader.finder]
     tags:
       - {name: templating.helper, alias: loader}
+  ricjLoader.finder:
+    class:        plugins\riCjLoader\Finder
+    arguments:    [@utility.file, @environment]
   ricjLoader.browser:
     class:        plugins\riCjLoader\Browser\Browser
   ricjLoader.css_handler:
     class:        plugins\riCjLoader\Handler\CssHandler
-    arguments:    [@riCache.Cache, %ricjLoader.cache_path%, @utility.file]
+    arguments:    [@templating.helper.router]
     tags:
-      - {name: ricjloader.handler}
+      - {name: ricjloader.handler, alias: css}
   ricjLoader.js_handler:
     class:        plugins\riCjLoader\Handler\JsHandler
+    arguments:    [@templating.helper.router]
     tags:
-      - {name: ricjloader.handler}
+      - {name: ricjloader.handler, alias: js}
   ricjLoader.minify_filter:
     class:        plugins\riCjLoader\Filter\MinifyFilter
     arguments: [@riCache.Cache, %ricjLoader.cache_path%, @utility.file]
+    tags:
+      - {name: ricjloader.filter, alias: minify}

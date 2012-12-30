@@ -3,12 +3,15 @@ namespace plugins\riCjLoader\Handler;
 
 abstract class Handler
 {
+    protected $file_pattern = '';
 
-    protected
-        $file_pattern = '',
-        $extension = '',
-        $template_base_dir = '',
-        $host = '';
+    protected $extension = '';
+
+    protected $template_base_dir = '';
+
+    protected $host = '';
+
+    protected $router;
 
     /**
      *
@@ -22,13 +25,17 @@ abstract class Handler
      * @param string $location
      * @param array $options
      */
-    public function __construct()
+    public function __construct($router)
     {
         global $request_type;
-        if ($request_type == 'SSL')
+        if ($request_type == 'SSL') {
             $this->host = HTTPS_SERVER . DIR_WS_HTTPS_CATALOG;
-        else
+        }
+        else {
             $this->host = HTTP_SERVER . DIR_WS_CATALOG;
+        }
+
+        $this->router = $router;
     }
 
     /**
@@ -53,11 +60,13 @@ abstract class Handler
      *
      * @param array $files
      * @param string $type
-     * @param object Loader $loader
+     * @param object Loader $finder
      */
-    public function process($files, $loader)
+    public function process($files, $cache, $finder, $filters)
     {
-        $files = $loader->findAssets($files);
+        $router = $this->router;
+
+        $files = $finder->findAssets($files);
 
         $to_load = array();
 
@@ -66,7 +75,7 @@ abstract class Handler
             // the file is external file or minify is off
             if ($options['external']) {
                 // if the inject content is not empty, we should push it into 1 file to cache
-                if (($cache_files = $this->cache($to_load, $loader)) !== false) {
+                if (($cache_files = $this->cache($to_load, $finder, $cache, $filters)) !== false) {
                     foreach ($cache_files as $cache_file)
                         printf($this->file_pattern, $cache_file);
                 }
@@ -75,14 +84,14 @@ abstract class Handler
             } else {
                 // the file is php file and needs to be included
                 if ($options['ext'] == 'php') {
-                    if (($cache_files = $this->cache($to_load, $loader)) !== false) {
+                    if (($cache_files = $this->cache($to_load, $cache, $finder, $filters)) !== false) {
                         foreach ($cache_files as $cache_file)
                             printf($this->file_pattern, $cache_file);
                     }
                     include($file);
                 } elseif (isset($options['inline'])) {
 
-                    if (($cache_files = $this->cache($to_load, $loader)) !== false) {
+                    if (($cache_files = $this->cache($to_load, $cache, $finder, $filters)) !== false) {
                         foreach ($cache_files as $cache_file)
                             printf($this->file_pattern, $cache_file);
                     }
@@ -94,7 +103,7 @@ abstract class Handler
             }
         }
 
-        if (($cache_files = $this->cache($to_load, $loader)) !== false) {
+        if (($cache_files = $this->cache($to_load, $cache, $finder, $filters)) !== false) {
             foreach ($cache_files as $cache_file)
                 printf($this->file_pattern, $cache_file);
         }
@@ -110,11 +119,11 @@ abstract class Handler
      *
      * @param array $files
      * @param string $type
-     * @param object Loader $loader
+     * @param object Loader $finder
      */
-    public function processArray($files, $loader)
+    public function processArray($files, $finder)
     {
-        return $loader->findAssets($files);
+        return $finder->findAssets($files);
     }
 
     /**
@@ -126,12 +135,12 @@ abstract class Handler
      * @param string $filesrcs
      * @param string $type
      */
-    protected function cache(&$to_load, $loader)
+    protected function cache(&$to_load, $cache, $finder, $filters)
     {
         $cache_files = array();
         if (!empty($to_load)) {
-            foreach ($loader->getFilters() as $filter) {
-                $cache_files = $filter['filter']->filter($to_load, $this->extension, $loader->getOption('cache'), $filter['options']);
+            foreach ($filters as $filter) {
+                $cache_files = $filter['filter']->filter($to_load, $this->extension, $cache, $filter['options']);
             }
 
             foreach ($cache_files as $key => $value) {

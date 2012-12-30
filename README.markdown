@@ -36,7 +36,7 @@ Delete everything below until you find:
 
 *Loading from within any template file*
 
-`$riview->get('loader')->load(array($array_of_files_to_load), $location, $silent)`
+`$view['loader']->load(array($array_of_files_to_load), $location, $silent)`
 
 `$location` is optional, you can pass in "head", "footer", or nothing at all. Note that CSS files will ALWAYS be loaded at head.
 
@@ -59,7 +59,7 @@ Notes:
 You can load inline CSS and JS easily with our loader, there are 2 methods:
 
 Assuming we need to load inline js here which also makes use of jquery:
-`$riview->get('loader')->load(array('jquery.lib', 'inline.js' => array('inline' => '$("#test".html("test"))')))`
+`$view['loader']->load(array('jquery.lib', 'inline.js' => array('inline' => '$("#test".html("test"))')))`
 
 Note that in the above sample code we put inline.js in the filename, you can use anyname but you MUST use the right extension (js or css). Don't worry if you use the same name inline.js at many load locations, they will all be loaded.
 
@@ -67,12 +67,12 @@ Note that in the above sample code we put inline.js in the filename, you can use
 
 Using the above example:
 
-    $riview->get('loader')->load(array('jquery.lib'));
-    $riview->get('loader')->startInline();
+    $view['loader']->load(array('jquery.lib'));
+    $view['loader']->startInline();
     ?>
       $("#test".html("test"))
     <?php
-    $riview->get('loader')->endInline();
+    $view['loader']->endInline();
 
 *Libraries*
 

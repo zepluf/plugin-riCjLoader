@@ -4,8 +4,7 @@ settings:
   load_global: true
   load_loaders: true
   supported_externals: ['http', 'https', '//']
-  browser: ricjloader.browser
-  handlers: {css: ricjloader.css_handler, js: ricjloader.js_handler}
+  handlers: [css, js]
   filters:
-    ricjLoader.minify_filter: {combine: false}
+    minify: {combine: false}
 
