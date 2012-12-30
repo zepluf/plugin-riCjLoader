@@ -1,10 +1,10 @@
 {
-    "name": "zepluf/ricjloader",
+    "name": "zepluf/plugin-ricjloader",
     "description": "The \"CSS - JS loader\" plugin",
     "license": "custom",
     "version": "1.0.1",
     "require": {
         "php": ">=5.3.3",
-        "composer/installers": "*"
+        "zepluf/installer": "*"
     }
 }
