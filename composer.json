@@ -7,5 +7,6 @@
     "require": {
         "php": ">=5.3.3",
         "zepluf/installer": "*"
-    }
+    },
+    "target-dir": "riCjLoader"
 }
