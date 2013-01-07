@@ -1,6 +1,3 @@
-parameters:
-  ricjLoader.cache_path: %web_cache_dir%/ricjloader/
-
 services:
   ricjLoader.loader_helper:
     class:        plugins\riCjLoader\LoaderHelper
@@ -24,6 +21,6 @@ services:
       - {name: ricjloader.handler, alias: js}
   ricjLoader.minify_filter:
     class:        plugins\riCjLoader\Filter\MinifyFilter
-    arguments: [@riCache.Cache, %ricjLoader.cache_path%, @utility.file]
+    arguments: [@riCache.Cache,"%web_cache_dir%/ricjloader/", @utility.file]
     tags:
       - {name: ricjloader.filter, alias: minify}
