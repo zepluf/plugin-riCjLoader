@@ -3,7 +3,7 @@
 namespace plugins\riCjLoader\Filter;
 
 // setup Minify
-set_include_path(__DIR__ . '/../vendor/minify/min/lib/' . get_include_path());
+set_include_path(__DIR__ . '/../vendor/minify/min/lib/;' . get_include_path());
 require 'Minify.php';
 require 'Minify/Cache/File.php';
 
