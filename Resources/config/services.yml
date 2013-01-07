@@ -1,6 +1,3 @@
-parameters:
-  ricjLoader.cache_path: %web_cache_dir%/ricjloader/
-
 services:
   ricjLoader.loader_helper:
     class:        plugins\riCjLoader\LoaderHelper
