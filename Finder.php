@@ -119,11 +119,20 @@ class Finder
         } // absolute?
         elseif (file_exists($path = $file)) {
 
-        } // plugin?
+        } // plugin or bundle?
         elseif (strpos($file, ':') !== false) {
             $file = explode(':', $file);
-            if (!file_exists($path = sprintf(DIR_FS_CATALOG . DIR_WS_TEMPLATE . "plugins/%s/Resources/public/%s", $file[0], $file[1]))) {
-                if (!file_exists($path = sprintf(DIR_FS_CATALOG . "zepluf/app/plugins/%s/Resources/public/%s", $file[0], $file[1]))) {
+            //plugin
+            if (substr($file[0], -6) !== 'Bundle') {
+                if (!file_exists($path = sprintf(DIR_FS_CATALOG . DIR_WS_TEMPLATE . "plugins/%s/Resources/public/%s", $file[0], $file[1]))) {
+                    if (!file_exists($path = sprintf(DIR_FS_CATALOG . "zepluf/app/plugins/%s/Resources/public/%s", $file[0], $file[1]))) {
+                        $error = true;
+                    }
+                }
+            } else {
+                //bundle
+                //Note: make a parser to parse
+                if (!file_exists($path = sprintf(DIR_FS_CATALOG . "zepluf/src/Zepluf/Bundle/%s/Resources/public/%s", $file[0], $file[1]))) {
                     $error = true;
                 }
             }
@@ -378,12 +387,10 @@ class Finder
             // set current page
             if ($this->this_is_home_page) {
                 $this->current_page = 'index_home';
-            }
-            elseif ($this->current_page == 'index') {
+            } elseif ($this->current_page == 'index') {
                 if (isset($_GET['cPath'])) {
                     $this->current_page = 'index_category';
-                }
-                elseif (isset($_GET['manufacturers_id'])) {
+                } elseif (isset($_GET['manufacturers_id'])) {
                     $this->current_page = 'index_manufacturer';
                 }
             }
