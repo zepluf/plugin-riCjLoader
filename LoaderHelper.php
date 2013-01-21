@@ -68,7 +68,7 @@ class LoaderHelper extends Helper
 
     public function __construct($settings, $browser, $finder)
     {
-        $this->options = array_merge($this->options, $settings->get('plugins.ricjloader.settings'));
+        $this->options = array_merge($this->options, $settings->get('plugins.ricjloader'));
 
         $this->browser = $browser;
 
@@ -91,7 +91,7 @@ class LoaderHelper extends Helper
      */
     public function setHandler($id, $handler)
     {
-        if(in_array($id, $this->options['handlers'])) {
+        if (in_array($id, $this->options['handlers'])) {
             $this->handlers[$id] = $handler;
 
             $this->finder->setBaseDir($id, $handler->getTemplateBaseDir());
@@ -104,8 +104,9 @@ class LoaderHelper extends Helper
      */
     public function setFilter($id, $filter)
     {
-        if(isset($this->options['filters'][$id])) {
-            $this->filters[$id] = array('filter' => $filter, 'options' => $this->options['filters'][$id]);;
+        if (isset($this->options['filters'][$id])) {
+            $this->filters[$id] = array('filter' => $filter, 'options' => $this->options['filters'][$id]);
+            ;
         }
     }
 
@@ -502,8 +503,7 @@ class LoaderHelper extends Helper
     {
         if ($multi) {
             $this->loaders = array_merge($this->loaders, $loaders);
-        }
-        else {
+        } else {
             $this->loaders[] = $loaders;
         }
     }

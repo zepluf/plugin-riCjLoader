@@ -12,7 +12,7 @@ namespace plugins\riCjLoader;
 
 class Finder
 {
-    protected $fileUtility;
+    protected $kernel;
 
     protected $template;
 
@@ -30,14 +30,11 @@ class Finder
 
     protected $cPath;
 
-    protected $environment;
-
     protected $supportedExternals = array();
 
-    public function __construct($fileUtility, $environment)
+    public function __construct($kernel)
     {
-        $this->fileUtility = $fileUtility;
-        $this->environment = $environment;
+        $this->kernel = $kernel;
     }
 
     public function setGlobalVariables()
@@ -125,14 +122,14 @@ class Finder
             //plugin
             if (substr($file[0], -6) !== 'Bundle') {
                 if (!file_exists($path = sprintf(DIR_FS_CATALOG . DIR_WS_TEMPLATE . "plugins/%s/Resources/public/%s", $file[0], $file[1]))) {
-                    if (!file_exists($path = sprintf(DIR_FS_CATALOG . "zepluf/app/plugins/%s/Resources/public/%s", $file[0], $file[1]))) {
+                    if (!file_exists($path = sprintf($this->kernel->getContainer()->getParameter('plugins.root_dir') . "/%s/Resources/public/%s", $file[0], $file[1]))) {
                         $error = true;
                     }
                 }
             } else {
-                //bundle
-                //Note: make a parser to parse
-                if (!file_exists($path = sprintf(DIR_FS_CATALOG . "zepluf/src/Zepluf/Bundle/%s/Resources/public/%s", $file[0], $file[1]))) {
+                // bundle
+                // TODO: make a parser to parse
+                if (!file_exists($path = sprintf($this->kernel->getBundle("StoreBundle")->getPath() . "/Resources/public/%s", $file[0], $file[1]))) {
                     $error = true;
                 }
             }
@@ -147,8 +144,9 @@ class Finder
                 }
             }
             //
-            if ($error && file_exists($path = $file)) $error = false;
-
+            if ($error && file_exists($path = $file)) {
+                $error = false;
+            }
         }
 
         if (!$error) {
@@ -169,7 +167,7 @@ class Finder
         $result = array();
         foreach ($list as $file => $options) {
             $result[] = array(
-                'path' => $this->fileUtility->getRelativePath(DIR_FS_CATALOG, $file),
+                'path' => $this->kernel->getContainer()->get("utility.file")->getRelativePath(DIR_FS_CATALOG, $file),
                 'options' => $options
             );
         }
@@ -382,7 +380,7 @@ class Finder
      */
     function setCurrentPage()
     {
-        if ($this->environment->getSubEnvironment() == "frontend") {
+        if ($this->kernel->getContainer()->get("environment")->getSubEnvironment() == "frontend") {
 
             // set current page
             if ($this->this_is_home_page) {

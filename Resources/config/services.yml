@@ -6,7 +6,7 @@ services:
       - {name: templating.helper, alias: loader}
   ricjLoader.finder:
     class:        plugins\riCjLoader\Finder
-    arguments:    [@utility.file, @environment]
+    arguments:    [@kernel]
   ricjLoader.browser:
     class:        plugins\riCjLoader\Browser\Browser
   ricjLoader.css_handler:
@@ -21,6 +21,6 @@ services:
       - {name: ricjloader.handler, alias: js}
   ricjLoader.minify_filter:
     class:        plugins\riCjLoader\Filter\MinifyFilter
-    arguments: [@riCache.Cache,"%web_cache_dir%/ricjloader/", @utility.file]
+    arguments: [@riCache.Cache,"%web_cache_dir%/ricjloader/", %web_dir%, @utility.file]
     tags:
       - {name: ricjloader.filter, alias: minify}

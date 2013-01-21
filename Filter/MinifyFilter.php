@@ -3,7 +3,7 @@
 namespace plugins\riCjLoader\Filter;
 
 // setup Minify
-set_include_path(__DIR__ . '/../vendor/minify/min/lib/;' . get_include_path());
+set_include_path(__DIR__ . '/../vendor/minify/min/lib/' . PATH_SEPARATOR . get_include_path());
 require 'Minify.php';
 require 'Minify/Cache/File.php';
 
@@ -20,6 +20,11 @@ class MinifyFilter
     /**
      * @var
      */
+    protected $webPath;
+
+    /**
+     * @var
+     */
     protected $fileUtility;
 
     /**
@@ -27,10 +32,11 @@ class MinifyFilter
      * @param $cachePath
      * @param $fileUtility
      */
-    public function __construct($cache, $cachePath, $fileUtility)
+    public function __construct($cache, $cachePath, $webPath, $fileUtility)
     {
         $this->cache_path = $cachePath;
         $this->cache = $cache;
+        $this->webPath = $webPath;
         $this->fileUtility = $fileUtility;
     }
 
@@ -57,7 +63,7 @@ class MinifyFilter
 
                     // TODO: remove DIR_FS_CATALOG
                     if ($cache_file !== false) {
-                        $files[] = $this->host . $this->fileUtility->getRelativePath(DIR_FS_CATALOG, $destination_file);
+                        $files[] = $this->host . $this->fileUtility->getRelativePath($this->webPath, $destination_file);
                     }
                 }
             }
@@ -71,7 +77,7 @@ class MinifyFilter
             }
 
             if ($cache_file !== false) {
-                $files[] = $this->fileUtility->getRelativePath(DIR_FS_CATALOG, $destination_file);
+                $files[] = $this->fileUtility->getRelativePath($this->webPath, $destination_file);
             }
         }
 
