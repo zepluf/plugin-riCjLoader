@@ -47,11 +47,13 @@ class CssHandler extends Handler
                 } else {
                     // the file is php file and needs to be included
                     if ($options['ext'] == 'php') {
+                        // print out all the current files in stack first
                         if (($cache_files = $this->cache($to_load, $cache, $finder, $filters)) !== false) {
                             foreach ($cache_files as $cache_file) {
                                 printf($this->file_pattern, $media, $cache_file);
                             }
                         }
+                        // include the file
                         include($file);
                     } elseif (isset($options['inline'])) {
 

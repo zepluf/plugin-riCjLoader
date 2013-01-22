@@ -85,15 +85,17 @@ abstract class Handler
                 // the file is php file and needs to be included
                 if ($options['ext'] == 'php') {
                     if (($cache_files = $this->cache($to_load, $cache, $finder, $filters)) !== false) {
-                        foreach ($cache_files as $cache_file)
+                        foreach ($cache_files as $cache_file) {
                             printf($this->file_pattern, $cache_file);
+                        }
                     }
                     include($file);
                 } elseif (isset($options['inline'])) {
 
                     if (($cache_files = $this->cache($to_load, $cache, $finder, $filters)) !== false) {
-                        foreach ($cache_files as $cache_file)
+                        foreach ($cache_files as $cache_file) {
                             printf($this->file_pattern, $cache_file);
+                        }
                     }
                     echo $this->processInline($options['inline']);
                 } // minify

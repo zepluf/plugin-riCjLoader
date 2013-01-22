@@ -30,11 +30,38 @@ class Finder
 
     protected $cPath;
 
+    /**
+     * @var array
+     */
     protected $supportedExternals = array();
+
+    /**
+     * @var
+     */
+    protected $webDir;
+    /**
+     * @var
+     */
+    protected $currentTemplateDir;
 
     public function __construct($kernel)
     {
         $this->kernel = $kernel;
+        $this->currentTemplateDir = $kernel->getContainer()->getParameter('store.template_dir') . '/' . $kernel->getContainer()->getParameter('store.current_template');
+
+        if($kernel->getContainer()->get('environment')->getSubEnvironment() == "frontend") {
+            $this->setDirs(array(
+                $this->currentTemplateDir . '/%type%/',
+                $kernel->getContainer()->getParameter('store.template_dir') . '/template_default/%type%/'
+            ));
+        }
+        else {
+            $this->setDirs(array(
+                DIR_WS_ADMIN
+            ));
+        }
+
+        $this->webDir = $this->kernel->getContainer()->getParameter('web_dir');
     }
 
     public function setGlobalVariables()
@@ -65,23 +92,15 @@ class Finder
      */
     function findAssetsByPattern($extension, $directory, $type, $file_pattern = '')
     {
-        $this->templateDir = $this->getAssetDir($extension, $directory, DIR_WS_TEMPLATE);
-        $allFiles = $this->template->get_template_part($this->templateDir, $file_pattern, $extension);
-
-//        if ($this->getOption('inheritance') != '') {
-//            $defaultDir = $this->getAssetDir($extension, $directory, DIR_WS_TEMPLATES . $this->getOption('inheritance'));
-//            $allFiles = array_unique(array_merge($this->template->get_template_part($defaultDir, $file_pattern, $extension), $allFiles));
-//        }
+        $templateDir = $this->getAssetDir($extension, $directory, $this->currentTemplateDir);
+        $allFiles = $this->template->get_template_part($templateDir, $file_pattern, $extension);
 
         $files = array();
         foreach ($allFiles as $file) {
-            // case 1: file is in server but full path not passed, assuming it is under corresponding template css/js folder
-            if (file_exists(DIR_FS_CATALOG . DIR_WS_TEMPLATE . $directory . '/' . $file)) {
+            // file is in server but full path not passed, assuming it is under corresponding template css/js folder
+            if (file_exists($this->currentTemplateDir . '/' . $directory . '/' . $file)) {
                 $files[DIR_WS_TEMPLATE . $directory . '/' . $file] = array('type' => $type);
             }
-//            elseif ($this->getOption('inheritance') != '' && file_exists(DIR_FS_CATALOG . DIR_WS_TEMPLATES . $this->getOption('inheritance') . '/' . $directory . '/' . $file)) {
-//                $files[DIR_WS_TEMPLATES . $this->getOption('inheritance') . '/' . $directory . '/' . $file] = array('type' => $directory);
-//            }
         }
 
         return $files;
@@ -89,7 +108,9 @@ class Finder
 
     public function findAssets($files)
     {
-        if (!is_array($files)) $files = array($files => null);
+        if (!is_array($files)) {
+            $files = array($files => null);
+        }
 
         $list = array();
         foreach ($files as $file => $options) {
@@ -121,7 +142,7 @@ class Finder
             $file = explode(':', $file);
             //plugin
             if (substr($file[0], -6) !== 'Bundle') {
-                if (!file_exists($path = sprintf(DIR_FS_CATALOG . DIR_WS_TEMPLATE . "plugins/%s/Resources/public/%s", $file[0], $file[1]))) {
+                if (!file_exists($path = sprintf($this->currentTemplateDir . "/plugins/%s/Resources/public/%s", $file[0], $file[1]))) {
                     if (!file_exists($path = sprintf($this->kernel->getContainer()->getParameter('plugins.root_dir') . "/%s/Resources/public/%s", $file[0], $file[1]))) {
                         $error = true;
                     }
@@ -129,7 +150,7 @@ class Finder
             } else {
                 // bundle
                 // TODO: make a parser to parse
-                if (!file_exists($path = sprintf($this->kernel->getBundle("StoreBundle")->getPath() . "/Resources/public/%s", $file[0], $file[1]))) {
+                if (!file_exists($path = sprintf($this->kernel->getBundle($file[0])->getPath() . "/Resources/public/%s", $file[1]))) {
                     $error = true;
                 }
             }
@@ -138,7 +159,7 @@ class Finder
             // can we find the path?
             foreach ($this->dirs as $dir) {
                 $path = str_replace('%type%', $this->baseDirs[$options['type']], $dir) . $file;
-                if (file_exists(DIR_FS_CATALOG . $path)) {
+                if (file_exists($path)) {
                     $error = false;
                     break;
                 }
@@ -167,7 +188,7 @@ class Finder
         $result = array();
         foreach ($list as $file => $options) {
             $result[] = array(
-                'path' => $this->kernel->getContainer()->get("utility.file")->getRelativePath(DIR_FS_CATALOG, $file),
+                'path' => $this->kernel->getContainer()->get("utility.file")->getRelativePath($this->webDir, $file),
                 'options' => $options
             );
         }
@@ -355,16 +376,16 @@ class Finder
     {
         $loaders = array();
         if ($loaders_list == '*') {
-            $directory_array = $this->template->get_template_part(DIR_WS_TEMPLATE . 'auto_loaders', '/^loader_/', '.php');
+            $directory_array = $this->template->get_template_part($this->currentTemplateDir . '/auto_loaders', '/^loader_/', '.php');
             while (list ($key, $value) = each($directory_array)) {
                 /**
                  * include content from all site-wide loader_*.php files from includes/templates/YOURTEMPLATE/jscript/auto_loaders, alphabetically.
                  */
-                require(DIR_WS_TEMPLATE . 'auto_loaders' . '/' . $value);
+                require($this->currentTemplateDir . '/auto_loaders' . '/' . $value);
             }
         } elseif (is_array($loaders_list) && count($loaders_list) > 0) {
             foreach ($this->getOption('loaders') as $loader) {
-                if (file_exists($path = DIR_WS_TEMPLATE . 'auto_loaders' . '/loader_' . $loader . '.php')) {
+                if (file_exists($path = $this->currentTemplateDir . '/auto_loaders' . '/loader_' . $loader . '.php')) {
                     require($path);
                 }
             }
