@@ -1,12 +1,12 @@
 services:
+  ricjLoader.css_js_finder:
+    class:        plugins\riCjLoader\CssJsFinder
+    arguments:    [@kernel]
   ricjLoader.loader_helper:
     class:        plugins\riCjLoader\LoaderHelper
-    arguments:    [@settings, @ricjLoader.browser, @ricjLoader.finder]
+    arguments:    [@settings, @ricjLoader.browser, @ricjLoader.css_js_finder]
     tags:
       - {name: templating.helper, alias: loader}
-  ricjLoader.finder:
-    class:        plugins\riCjLoader\Finder
-    arguments:    [@kernel]
   ricjLoader.browser:
     class:        plugins\riCjLoader\Browser\Browser
   ricjLoader.css_handler:

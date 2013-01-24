@@ -2,7 +2,6 @@ cache: true
 cdn: true
 load_global: true
 load_loaders: true
-supported_externals: ['http', 'https', '//']
 handlers: [css, js]
 filters:
   minify: {combine: false}

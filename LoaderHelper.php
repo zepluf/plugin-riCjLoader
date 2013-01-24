@@ -73,8 +73,6 @@ class LoaderHelper extends Helper
         $this->browser = $browser;
 
         $this->finder = $finder;
-
-        $this->finder->setSupportedExternals($this->options["supported_externals"]);
     }
 
     /**
@@ -91,10 +89,8 @@ class LoaderHelper extends Helper
      */
     public function setHandler($id, $handler)
     {
-        if (in_array($id, $this->options['handlers'])) {
+        if (isset($this->options['handlers']) && in_array($id, $this->options['handlers'])) {
             $this->handlers[$id] = $handler;
-
-            $this->finder->setBaseDir($id, $handler->getTemplateBaseDir());
         }
     }
 
@@ -106,7 +102,6 @@ class LoaderHelper extends Helper
     {
         if (isset($this->options['filters'][$id])) {
             $this->filters[$id] = array('filter' => $filter, 'options' => $this->options['filters'][$id]);
-            ;
         }
     }
 
@@ -339,6 +334,7 @@ class LoaderHelper extends Helper
         $loaded_files = $to_load = array();
         foreach ($ordered_files as $location => $files) {
             $location_loaded_files = array();
+
             foreach ($files as $file => $options) {
                 if (!array_key_exists($file, $loaded_files)) {
                     $loaded_files[$file] = $location;
@@ -407,13 +403,13 @@ class LoaderHelper extends Helper
                                             if (strpos($css_file_options['local'], ":") !== false) {
                                                 $local = explode(":", $css_file_options['local']);
 
-                                                if (empty($local[1])) {
-                                                    $local[1] = $css_file;
+                                                if (empty($local[2])) {
+                                                    $local[2] = $css_file;
                                                 }
 
-                                                $file = $this->finder->findAsset($local[0] . ':' . $lib . '/' . $lib_version . '/' . $local[1], $options);
+                                                $file = $local[0] . ':' . $local[1] . ':' . $lib . '/' . $lib_version . '/' . $local[2];
                                             } else {
-                                                $file = $this->finder->findAsset('riCjLoader:libs/' . $lib . '/' . $lib_version . '/' . (!empty($css_file_options['local']) ? $css_file_options['local'] : $css_file), $options);
+                                                $file = 'plugins:riCjLoader:libs/' . $lib . '/' . $lib_version . '/' . (!empty($css_file_options['local']) ? $css_file_options['local'] : $css_file);
                                             }
 
                                             $this->_load($this->processed_files, $file, $location, $options);
@@ -430,11 +426,16 @@ class LoaderHelper extends Helper
                                         } else {
                                             if (strpos($jscript_file_options['local'], ":") !== false) {
                                                 $local = explode(":", $jscript_file_options['local']);
-                                                if (empty($local[1])) $local[1] = $jscript_file;
-                                                $file = $this->finder->findAsset($local[0] . ':' . $lib . '/' . $lib_version . '/' . $local[1], $options);
+
+                                                if (empty($local[2])) {
+                                                    $local[2] = $jscript_file;
+                                                }
+
+                                                $file = $local[0] . ':' . $local[1] . ':' . $lib . '/' . $lib_version . '/' . $local[2];
                                             } else {
-                                                $file = $this->finder->findAsset('riCjLoader:libs/' . $lib . '/' . $lib_version . '/' . (!empty($jscript_file_options['local']) ? $jscript_file_options['local'] : $jscript_file), $options);
+                                                $file = 'plugins:riCjLoader:libs/' . $lib . '/' . $lib_version . '/' . (!empty($jscript_file_options['local']) ? $jscript_file_options['local'] : $jscript_file);
                                             }
+
                                             $this->_load($this->processed_files, $file, $location, $options);
                                         }
                                     }
@@ -549,6 +550,28 @@ class LoaderHelper extends Helper
         }
 
         $this->getHandler($options['type'])->load($files, $file, $location, $options);
+    }
+
+    /**
+     *
+     */
+    function setCurrentPage()
+    {
+        if ($this->kernel->getContainer()->get("environment")->getSubEnvironment() == "frontend") {
+
+            // set current page
+            if ($this->this_is_home_page) {
+                $this->current_page = 'index_home';
+            } elseif ($this->current_page == 'index') {
+                if (isset($_GET['cPath'])) {
+                    $this->current_page = 'index_category';
+                } elseif (isset($_GET['manufacturers_id'])) {
+                    $this->current_page = 'index_manufacturer';
+                }
+            }
+        } else {
+            $this->current_page = preg_replace('/\.php/', '', substr(strrchr($_SERVER['PHP_SELF'], '/'), 1), 1);
+        }
     }
 
     /**

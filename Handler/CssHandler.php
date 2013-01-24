@@ -30,7 +30,9 @@ class CssHandler extends Handler
 
         //ob_start();
         foreach ($files as $media => $_files) {
+
             $_files = $finder->findAssets($_files);
+
             $to_load = array();
 
             foreach ($_files as $file => $options) {
@@ -38,7 +40,7 @@ class CssHandler extends Handler
                 // the file is external file or minify is off
                 if ($options['external']) {
                     // if the inject content is not empty, we should push it into 1 file to cache
-                    if (($cache_files = $this->cache($to_load, $cache, $finder, $filters)) !== false) {
+                    if (($cache_files = $this->cache($to_load, $cache, $filters)) !== false) {
                         foreach ($cache_files as $cache_file) {
                             printf($this->file_pattern, $media, $cache_file);
                         }
@@ -48,7 +50,7 @@ class CssHandler extends Handler
                     // the file is php file and needs to be included
                     if ($options['ext'] == 'php') {
                         // print out all the current files in stack first
-                        if (($cache_files = $this->cache($to_load, $cache, $finder, $filters)) !== false) {
+                        if (($cache_files = $this->cache($to_load, $cache, $filters)) !== false) {
                             foreach ($cache_files as $cache_file) {
                                 printf($this->file_pattern, $media, $cache_file);
                             }
@@ -57,7 +59,7 @@ class CssHandler extends Handler
                         include($file);
                     } elseif (isset($options['inline'])) {
 
-                        if (($cache_files = $this->cache($to_load, $cache, $finder, $filters)) !== false) {
+                        if (($cache_files = $this->cache($to_load, $cache, $filters)) !== false) {
                             foreach ($cache_files as $cache_file) {
                                 printf($this->file_pattern, $media, $cache_file);
                             }
@@ -72,7 +74,7 @@ class CssHandler extends Handler
                 }
             }
 
-            if (($cache_files = $this->cache($to_load, $cache, $finder, $filters)) !== false) {
+            if (($cache_files = $this->cache($to_load, $cache, $filters)) !== false) {
                 foreach ($cache_files as $cache_file) {
                     printf($this->file_pattern, $media, $cache_file);
                 }
