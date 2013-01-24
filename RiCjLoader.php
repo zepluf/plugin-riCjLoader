@@ -23,7 +23,7 @@ class RiCjLoader extends PluginCore{
     }
 
     public function activate(){
-        riMkDir($this->container->getParameter('web_cache_dir') . '/ricjloader/');
+        riMkDir($this->container->getParameter('web.cache_dir') . '/ricjloader/');
         return true;
     }
 }
