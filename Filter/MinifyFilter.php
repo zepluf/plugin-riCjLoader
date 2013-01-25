@@ -59,11 +59,11 @@ class MinifyFilter
 
                 $destination_file = $this->cache_path . $cache_filename;
                 if (!file_exists($destination_file) || !$use_cache) {
-                    $cache_file = $this->cache->write($destination_file, \Minify::combine($file, array('minifiers' => array('application/x-javascript' => ''))));
+                    $this->cache->write($destination_file, \Minify::combine($file, array('minifiers' => array('application/x-javascript' => ''))));
+                }
 
-                    if ($cache_file !== false) {
-                        $files[] = $this->host . $this->fileUtility->getRelativePath($this->storeRootDir, $destination_file);
-                    }
+                if (file_exists($destination_file)) {
+                    $files[] = $this->host . $this->fileUtility->getRelativePath($this->storeRootDir, $destination_file);
                 }
             }
         } else {
@@ -75,7 +75,7 @@ class MinifyFilter
                 $cache_file = $this->cache->write($destination_file, \Minify::combine($sources, $options));
             }
 
-            if ($cache_file !== false) {
+            if (file_exists($destination_file)) {
                 $files[] = $this->fileUtility->getRelativePath($this->storeRootDir, $destination_file);
             }
         }
