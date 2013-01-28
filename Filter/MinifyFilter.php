@@ -49,7 +49,6 @@ class MinifyFilter
      */
     public function filter($sources, $extension, $use_cache, $options)
     {
-
         $files = array();
 
         // handle request
@@ -63,9 +62,11 @@ class MinifyFilter
                 }
 
                 if (file_exists($destination_file)) {
+
                     $files[] = $this->host . $this->fileUtility->getRelativePath($this->storeRootDir, $destination_file);
                 }
             }
+
         } else {
             $cache_filename = md5(serialize($sources)) . '.' . $extension;
 
