@@ -64,13 +64,13 @@ class CssJsFinder extends AssetFinder
      */
     function findAssetsByPattern($extension, $directory, $type, $file_pattern = '')
     {
-        $templateDir = $this->getAssetDir($extension, $directory, $this->currentTemplateDir);
+        $templateDir = $this->getAssetDir($extension, $directory, $this->templatesDir . '/' . $this->currentTemplate  );
         $allFiles = $this->template->get_template_part($templateDir, $file_pattern, $extension);
 
         $files = array();
         foreach ($allFiles as $file) {
             // file is in server but full path not passed, assuming it is under corresponding template css/js folder
-            if (file_exists($this->currentTemplateDir . '/' . $directory . '/' . $file)) {
+            if (file_exists($this->templatesDir . '/' . $this->currentTemplate   . '/' . $directory . '/' . $file)) {
                 $files[DIR_WS_TEMPLATE . $directory . '/' . $file] = array('type' => $type);
             }
         }
@@ -85,16 +85,16 @@ class CssJsFinder extends AssetFinder
     {
         $loaders = array();
         if ($loaders_list == '*') {
-            $directory_array = $this->template->get_template_part($this->currentTemplateDir . '/auto_loaders', '/^loader_/', '.php');
+            $directory_array = $this->template->get_template_part($this->templatesDir . '/' . $this->currentTemplate   . '/auto_loaders', '/^loader_/', '.php');
             while (list ($key, $value) = each($directory_array)) {
                 /**
                  * include content from all site-wide loader_*.php files from includes/templates/YOURTEMPLATE/jscript/auto_loaders, alphabetically.
                  */
-                require($this->currentTemplateDir . '/auto_loaders' . '/' . $value);
+                require($this->templatesDir . '/' . $this->currentTemplate   . '/auto_loaders' . '/' . $value);
             }
         } elseif (is_array($loaders_list) && count($loaders_list) > 0) {
             foreach ($this->getOption('loaders') as $loader) {
-                if (file_exists($path = $this->currentTemplateDir . '/auto_loaders' . '/loader_' . $loader . '.php')) {
+                if (file_exists($path = $this->templatesDir . '/' . $this->currentTemplate   . '/auto_loaders' . '/loader_' . $loader . '.php')) {
                     require($path);
                 }
             }
