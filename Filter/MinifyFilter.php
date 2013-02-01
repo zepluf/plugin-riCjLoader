@@ -62,11 +62,9 @@ class MinifyFilter
                 }
 
                 if (file_exists($destination_file)) {
-
                     $files[] = $this->host . $this->fileUtility->getRelativePath($this->storeRootDir, $destination_file);
                 }
             }
-
         } else {
             $cache_filename = md5(serialize($sources)) . '.' . $extension;
 

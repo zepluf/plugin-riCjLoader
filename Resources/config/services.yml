@@ -24,3 +24,8 @@ services:
     arguments: [@riCache.Cache,"%web.cache_dir%/ricjloader/", %store.root_dir%, @utility.file]
     tags:
       - {name: ricjloader.filter, alias: minify}
+  ricjLoader.page_end_listener:
+    class: plugins\riCjLoader\EventListener\PageEndListener
+    arguments: [@ricjLoader.loader_helper]
+    tags:
+      - {name: kernel.event_subscriber}
