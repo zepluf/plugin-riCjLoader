@@ -29,11 +29,7 @@
     			<min>5.3.0</min>
    			</php>
    		</required>
-   		<plugins>   
-   			<plugin>
-   				<codename>riCache</codename>
-   				<min>1.0</min>
-   			</plugin>			  			   				   			
+   		<plugins>
    		</plugins>
 	</dependencies>
 	<changelog>

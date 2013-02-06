@@ -21,7 +21,7 @@ services:
       - {name: ricjloader.handler, alias: js}
   ricjLoader.minify_filter:
     class:        plugins\riCjLoader\Filter\MinifyFilter
-    arguments: [@riCache.Cache,"%web.cache_dir%/ricjloader/", %store.root_dir%, @utility.file]
+    arguments: [@storebundle.cache,"%web.cache_dir%/ricjloader/", %store.root_dir%, @utility.file]
     tags:
       - {name: ricjloader.filter, alias: minify}
   ricjLoader.page_end_listener:
