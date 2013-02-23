@@ -30,9 +30,6 @@ class LoaderHelper extends Helper
     protected $options = array(
         'dirs' => array(),
         'loaders' => '*',
-        'load_global' => true,
-        'load_page' => true,
-        'load_loaders' => true,
         'load_print' => true
     );
 
@@ -222,18 +219,33 @@ class LoaderHelper extends Helper
      */
     public function injectAssets($content)
     {
-        if ($this->getOption('load_global')) {
-            $this->loadGlobal();
+        // parse the loads
+        // sample: abc.css, template:current:file.php|type:js
+        preg_match_all("/(<!-- load:)(.*?)(-->)/", $content, $matches, PREG_SET_ORDER);
+        foreach ($matches as $val) {
+            $val[2] = str_replace(' ', '', $val[2]);
+            $temp = explode(',', $val[2]);
+            $load = array();
+            foreach ($temp as $v) {
+
+                // check if we have additional parameters
+                if(strpos($v, '|') !== false) {
+                    $v = explode('|', $v);
+                    $v[1] = explode(';', $v[1]);
+                    foreach ($v[1] as $u) {
+                        $u = explode(':', $u);
+                        $load[$v[0]][$u[0]] = $u[1];
+                    }
+                }
+                else{
+                    $load[] = $v;
+                }
+            }
+            $location = $this->load($load, '', true);
+            $content = str_replace($val[0], '<!-- ricjloader: ' . $location . ' -->', $content);
         }
 
-        if ($this->getOption('load_page')) {
-            $this->loadPage($this);
-        }
-
-        if ($this->getOption('load_loaders')) {
-            $this->loadLoaders();
-        }
-
+        // load the files
         $ordered_files = array();
         // scan the content to find out the real order of the loader
         preg_match_all("/(<!-- ricjloader:)(.*?)(-->)/", $content, $matches, PREG_SET_ORDER);

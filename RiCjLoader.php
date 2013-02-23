@@ -13,7 +13,7 @@ class RiCjLoader extends PluginCore
     {
         global $autoLoadConfig;
         // we want to include the loader into the view for easy access, we need to do it after the template is loaded
-        $autoLoadConfig[200][] = array('autoType' => 'require', 'loadFile' => __DIR__ . '/init_includes.php');
+        $autoLoadConfig[90][] = array('autoType' => 'require', 'loadFile' => __DIR__ . '/init_includes.php');
     }
 
     public function activate()
